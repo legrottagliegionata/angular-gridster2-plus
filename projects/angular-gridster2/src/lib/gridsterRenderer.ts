@@ -37,7 +37,7 @@ export class GridsterRenderer {
 
       renderer.setStyle(el, 'order', item.y * this.gridster.columns + item.x);
       renderer.setStyle(el, 'margin-bottom', $options.margin + 'px');
-      renderer.setStyle(el, DirTypes.LTR ? 'margin-right' : 'margin-left', '');
+      renderer.setStyle(el, $options.dirType === DirTypes.LTR ? 'margin-right' : 'margin-left', '');
     } else {
       const x = Math.round(this.gridster.curColWidth * item.x);
       const y = Math.round(this.gridster.curRowHeight * item.y);
@@ -58,7 +58,7 @@ export class GridsterRenderer {
           }
         }
         if (this.gridster.columns === item.cols + item.x) {
-          if ($options.outerMarginBottom !== null) {
+          if ($options.outerMarginRight !== null) {
             marginRight = $options.outerMarginRight + 'px';
           } else {
             marginRight = $options.margin + 'px';

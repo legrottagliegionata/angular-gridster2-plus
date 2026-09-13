@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { DisplayGrid, Gridster, GridsterApi, GridsterConfig, GridsterItem, GridsterItemConfig, GridType } from 'angular-gridster2';
+import { DisplayGrid, Gridster, GridsterApi, GridsterConfig, GridsterItem, GridsterItemConfig, GridType } from 'angular-gridster2-plus';
 import { MarkdownComponent } from 'ngx-markdown';
 
 @Component({

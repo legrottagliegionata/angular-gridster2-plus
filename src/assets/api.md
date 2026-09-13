@@ -12,4 +12,4 @@ Can be access from `viewChild(Gridster).api` or get it from `options.initCallbac
 | getItemComponent: (item: GridsterItem)       | call to get a internal component for item. Returns a component item or undefined if not found.          | GridsterItemComponent |
 
 To see how to push/swap/pushResize items from code look at the source of this
-component [here](https://github.com/tiberiuzuld/angular-gridster2/blob/master/src/app/sections/api/api.component.ts)
+component [here](https://github.com/legrottagliegionata/angular-gridster2-plus/blob/master/src/app/sections/api/api.ts)

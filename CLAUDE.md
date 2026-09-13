@@ -14,7 +14,7 @@ Community fork of [tiberiuzuld/angular-gridster2](https://github.com/tiberiuzuld
 npm ci --legacy-peer-deps                 # plain `npm ci` fails: lockfile lacks peer zone.js
 npm run test-lib -- --watch=false         # library unit tests (vitest + jsdom, zoneless)
 npm run build-lib                         # ng-packagr build into dist/angular-gridster2
-npm run lint                              # angular-eslint
+npm run lint                              # angular-eslint; the library is not lint-clean yet (problems inherited from upstream)
 npm start                                 # demo app (src/app) on localhost:4200
 ```
 

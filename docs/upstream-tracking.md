@@ -69,6 +69,10 @@ Dependabot PRs are not tracked: dependencies are updated separately.
 
 `gridster-item` has `transition: .3s` on every property: disable transitions before measuring layout from scripts, otherwise sizes and even `flex-shrink` are read mid-animation.
 
+## Lint
+
+`ng lint angular-gridster2` is red on upstream master (checked 2026-09-14): 32 problems, mostly `consistent-type-definitions` on exported `type`s, `prefer-for-of`, `no-inferrable-types` and `any`/unused variables in `gridsterUtils.spec.ts`. The integration branch adds none. Switching the public `type`s to `interface` is an API-visible change to plan separately.
+
 ## Issue triage
 
 Not started. Snapshot 2026-09-13: 324 open issues; labels: 42 question, 23 enhancement, 16 bug; 59% opened in 2018–2020.

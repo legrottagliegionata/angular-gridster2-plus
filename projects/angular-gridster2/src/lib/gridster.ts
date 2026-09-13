@@ -253,6 +253,9 @@ export class Gridster implements OnInit, OnDestroy {
       }
     }
     rows += $options.addEmptyRowsCount;
+    if (this.dragInProgress && $options.gridType === GridType.ScrollVertical) {
+      rows = Math.max(rows, this.rows);
+    }
     if (this.columns !== columns || this.rows !== rows) {
       this.columns = columns;
       this.rows = rows;
@@ -316,8 +319,9 @@ export class Gridster implements OnInit, OnDestroy {
     if ($options.setGridSize) {
       this.renderer.addClass(this.el, 'gridSize');
       if (!this.mobile) {
-        this.renderer.setStyle(this.el, 'width', this.columns * this.curColWidth + $options.margin + 'px');
-        this.renderer.setStyle(this.el, 'height', this.rows * this.curRowHeight + $options.margin + 'px');
+        const outerMarginSize = $options.outerMargin ? $options.margin : -$options.margin;
+        this.renderer.setStyle(this.el, 'width', this.columns * this.curColWidth + outerMarginSize + 'px');
+        this.renderer.setStyle(this.el, 'height', this.rows * this.curRowHeight + outerMarginSize + 'px');
       }
     } else {
       this.renderer.removeClass(this.el, 'gridSize');
@@ -365,6 +369,9 @@ export class Gridster implements OnInit, OnDestroy {
       item.rows = $item.rows;
       itemComponent.itemChanged();
     }
+    if (this.clampItemSizeToLimits($item, item)) {
+      itemComponent.itemChanged();
+    }
     if ($item.x === -1 || $item.y === -1) {
       this.autoPositionItem(itemComponent);
     } else if (this.checkCollision($item)) {
@@ -401,7 +408,23 @@ export class Gridster implements OnInit, OnDestroy {
     }
   }
 
-  checkCollision(item: GridsterItemConfig, checkRatio?: boolean): GridsterItem | boolean {
+  private clampItemSizeToLimits($item: GridsterItemConfig, item: GridsterItemConfig): boolean {
+    const $options = this.$options();
+    const minItemCols = $item.minItemCols === undefined ? $options.minItemCols : $item.minItemCols;
+    const maxItemCols = $item.maxItemCols === undefined ? $options.maxItemCols : $item.maxItemCols;
+    const minItemRows = $item.minItemRows === undefined ? $options.minItemRows : $item.minItemRows;
+    const maxItemRows = $item.maxItemRows === undefined ? $options.maxItemRows : $item.maxItemRows;
+    const cols = Math.min(Math.max($item.cols, minItemCols), maxItemCols);
+    const rows = Math.min(Math.max($item.rows, minItemRows), maxItemRows);
+    if ($item.cols === cols && $item.rows === rows) {
+      return false;
+    }
+    $item.cols = item.cols = cols;
+    $item.rows = item.rows = rows;
+    return true;
+  }
+
+  checkCollision(item: GridsterItemConfig, checkRatio?: boolean, skipItem?: GridsterItem): GridsterItem | boolean {
     let collision: GridsterItem | boolean = false;
     const options = this.options();
     if (options.itemValidateCallback) {
@@ -411,7 +434,7 @@ export class Gridster implements OnInit, OnDestroy {
       collision = true;
     }
     if (!collision) {
-      const c = this.findItemWithItem(item);
+      const c = this.findItemWithItem(item, skipItem);
       if (c) {
         collision = c;
       }
@@ -445,10 +468,10 @@ export class Gridster implements OnInit, OnDestroy {
     return !(noNegativePosition && maxGridCols && maxGridRows && inRatio && inColsLimits && inRowsLimits && inMinArea && inMaxArea);
   }
 
-  findItemWithItem(item: GridsterItemConfig): GridsterItem | boolean {
+  findItemWithItem(item: GridsterItemConfig, skipItem?: GridsterItem): GridsterItem | boolean {
     for (let i = 0; i < this.grid.length; i++) {
       const widget = this.grid[i];
-      if (widget.$item() !== item && this.checkCollisionTwoItems(widget.$item(), item)) {
+      if (widget !== skipItem && widget.$item() !== item && this.checkCollisionTwoItems(widget.$item(), item)) {
         return widget;
       }
     }
@@ -489,11 +512,22 @@ export class Gridster implements OnInit, OnDestroy {
       newItem.rows = $options.defaultItemRows;
     }
     this.setGridDimensions();
+    const existingItemComponent = this.getItemComponent(newItem);
+    if (
+      existingItemComponent &&
+      startingFrom.y === undefined &&
+      startingFrom.x === undefined &&
+      newItem.y > -1 &&
+      newItem.x > -1 &&
+      !this.checkCollision(newItem, false, existingItemComponent)
+    ) {
+      return true;
+    }
     for (let y = startingFrom.y || 0; y < this.rows; y++) {
       newItem.y = y;
       for (let x = startingFrom.x || 0; x < this.columns; x++) {
         newItem.x = x;
-        if (!this.checkCollision(newItem)) {
+        if (!this.checkCollision(newItem, false, existingItemComponent)) {
           return true;
         }
       }

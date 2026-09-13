@@ -2,10 +2,10 @@ import { Gridster } from './gridster';
 import { GridsterItem } from './gridsterItem';
 
 export class GridsterPush {
-  public fromSouth: string = 'fromSouth';
-  public fromNorth: string = 'fromNorth';
-  public fromEast: string = 'fromEast';
-  public fromWest: string = 'fromWest';
+  public fromSouth = 'fromSouth';
+  public fromNorth = 'fromNorth';
+  public fromEast = 'fromEast';
+  public fromWest = 'fromWest';
   private pushedItems: GridsterItem[] = [];
   private pushedItemsTemp: GridsterItem[] = [];
   private pushedItemsTempPath: { x: number; y: number }[][] = [];
@@ -125,7 +125,8 @@ export class GridsterPush {
     for (; i < conflicts.length; i++) {
       itemCollision = conflicts[i];
       if (itemCollision === this.gridsterItem) {
-        continue;
+        makePush = false;
+        break;
       }
       if (!itemCollision.canBeDragged()) {
         makePush = false;
@@ -137,16 +138,16 @@ export class GridsterPush {
         makePush = false;
         break;
       }
-      if (this.tryPattern[direction][0].call(this, itemCollision, gridsterItem)) {
-        this.pushedItemsOrder.push(itemCollision);
-        pushedItems.push(itemCollision);
-      } else if (this.tryPattern[direction][1].call(this, itemCollision, gridsterItem)) {
-        this.pushedItemsOrder.push(itemCollision);
-        pushedItems.push(itemCollision);
-      } else if (this.tryPattern[direction][2].call(this, itemCollision, gridsterItem)) {
-        this.pushedItemsOrder.push(itemCollision);
-        pushedItems.push(itemCollision);
-      } else {
+      let pushed = false;
+      for (const tryPush of this.tryPattern[direction]) {
+        if (tryPush.call(this, itemCollision, gridsterItem)) {
+          this.pushedItemsOrder.push(itemCollision);
+          pushedItems.push(itemCollision);
+          pushed = true;
+          break;
+        }
+      }
+      if (!pushed) {
         makePush = false;
         break;
       }
@@ -285,7 +286,7 @@ export class GridsterPush {
     const i = this.pushedItems.indexOf(gridsterItem);
     if (i > -1) {
       this.pushedItemsPath[i].pop();
-      if (!this.pushedItemsPath.length) {
+      if (!this.pushedItemsPath[i].length) {
         this.pushedItems.splice(i, 1);
         this.pushedItemsPath.splice(i, 1);
       }

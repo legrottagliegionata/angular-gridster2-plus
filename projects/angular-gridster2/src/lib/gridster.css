@@ -28,12 +28,16 @@ gridster.fixed {
 }
 
 gridster.mobile {
+  display: flex;
+  flex-direction: column;
   overflow-x: hidden;
   overflow-y: auto;
 }
 
 gridster.mobile gridster-item {
   position: relative;
+  /* items are scroll containers (overflow: hidden), so in the flex column they would shrink to fit */
+  flex-shrink: 0;
 }
 
 gridster.gridSize {

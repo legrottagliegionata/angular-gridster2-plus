@@ -42,14 +42,14 @@ export class GridsterDraggable {
   positionXBackup: number;
   positionYBackup: number;
   enabled: boolean;
-  mousemove: () => void;
-  mouseup: () => void;
-  mouseleave: () => void;
-  contextmenu: () => void;
-  cancelOnBlur: () => void;
-  touchmove: () => void;
-  touchend: () => void;
-  touchcancel: () => void;
+  mousemove: (() => void) | null;
+  mouseup: (() => void) | null;
+  mouseleave: (() => void) | null;
+  contextmenu: (() => void) | null;
+  cancelOnBlur: (() => void) | null;
+  touchmove: (() => void) | null;
+  touchend: (() => void) | null;
+  touchcancel: (() => void) | null;
   mousedown: () => void;
   touchstart: () => void;
   push: GridsterPush;
@@ -65,14 +65,18 @@ export class GridsterDraggable {
   ) {}
 
   destroy(): void {
-    if (this.gridster.previewStyle) {
+    if (this.mousemove && this.gridster) {
+      // the item is destroyed in the middle of a drag: release the grid interaction state
+      cancelScroll();
+      this.gridster.dragInProgress = false;
+      this.gridster.movingItem = null;
+    }
+    this.removeStartListeners();
+    this.removeDragListeners();
+    if (this.gridster?.previewStyle) {
       this.gridster.previewStyle(true);
     }
     this.gridsterItem = this.gridster = this.collision = null!;
-    if (this.mousedown) {
-      this.mousedown();
-      this.touchstart();
-    }
   }
 
   dragStart(e: MouseEvent): void {
@@ -88,6 +92,8 @@ export class GridsterDraggable {
 
     e.stopPropagation();
     e.preventDefault();
+
+    this.resetLastMouse(e);
 
     this.zone.runOutsideAngular(() => {
       this.mousemove = this.gridsterItem.renderer.listen('document', 'mousemove', this.dragMove);
@@ -237,21 +243,18 @@ export class GridsterDraggable {
       e.stopPropagation();
       e.preventDefault();
     }
+    if (!this.gridster || !this.gridsterItem) {
+      return;
+    }
 
     cancelScroll();
-    this.cancelOnBlur();
-    this.mousemove();
-    this.mouseup();
-    this.mouseleave();
-    this.contextmenu();
-    this.touchmove();
-    this.touchend();
-    this.touchcancel();
+    this.removeDragListeners();
     this.gridsterItem.renderer.removeClass(this.gridsterItem.el, 'gridster-item-moving');
     this.gridsterItem.isMoving.set(false);
     this.gridster.dragInProgress = false;
     this.gridster.updateGrid();
     this.path = [];
+    this.resetLastMouse();
     const options = this.gridster.options();
     if (options.draggable && options.draggable.stop) {
       Promise.resolve(options.draggable.stop(this.gridsterItem.item(), this.gridsterItem, e)).then(this.makeDrag, this.cancelDrag);
@@ -271,9 +274,40 @@ export class GridsterDraggable {
     this.dragStop(e, false);
   };
 
+  private removeStartListeners(): void {
+    this.mousedown?.();
+    this.touchstart?.();
+    this.mousedown = this.touchstart = null!;
+  }
+
+  private removeDragListeners(): void {
+    this.cancelOnBlur?.();
+    this.mousemove?.();
+    this.mouseup?.();
+    this.mouseleave?.();
+    this.contextmenu?.();
+    this.touchmove?.();
+    this.touchend?.();
+    this.touchcancel?.();
+    this.cancelOnBlur =
+      this.mousemove =
+      this.mouseup =
+      this.mouseleave =
+      this.contextmenu =
+      this.touchmove =
+      this.touchend =
+      this.touchcancel =
+        null!;
+  }
+
   cancelDrag = (): void => {
+    if (!this.gridster || !this.gridsterItem) {
+      return;
+    }
     this.gridsterItem.$item().x = this.gridsterItem.item().x || 0;
     this.gridsterItem.$item().y = this.gridsterItem.item().y || 0;
+    this.positionX = this.positionXBackup = this.gridsterItem.$item().x;
+    this.positionY = this.positionYBackup = this.gridsterItem.$item().y;
     this.gridsterItem.setSize();
     if (this.push) {
       this.push.restoreItems();
@@ -292,6 +326,9 @@ export class GridsterDraggable {
   };
 
   makeDrag = (): void => {
+    if (!this.gridster || !this.gridsterItem) {
+      return;
+    }
     const options = this.gridster.options();
     if (
       this.gridster.$options().draggable.dropOverItems &&
@@ -456,5 +493,10 @@ export class GridsterDraggable {
       directions.push(Direction.LEFT);
     }
     return directions;
+  }
+
+  private resetLastMouse(e?: MouseEvent): void {
+    this.lastMouse.clientX = e?.clientX ?? 0;
+    this.lastMouse.clientY = e?.clientY ?? 0;
   }
 }

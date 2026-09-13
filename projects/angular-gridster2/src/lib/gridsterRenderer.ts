@@ -35,6 +35,7 @@ export class GridsterRenderer {
         renderer.setStyle(el, 'width', '');
       }
 
+      renderer.setStyle(el, 'order', item.y * this.gridster.columns + item.x);
       renderer.setStyle(el, 'margin-bottom', $options.margin + 'px');
       renderer.setStyle(el, DirTypes.LTR ? 'margin-right' : 'margin-left', '');
     } else {
@@ -65,6 +66,7 @@ export class GridsterRenderer {
         }
       }
 
+      renderer.setStyle(el, 'order', null);
       renderer.setStyle(el, 'margin-bottom', marginBottom);
       renderer.setStyle(el, $options.dirType === DirTypes.LTR ? 'margin-right' : 'margin-left', marginRight);
     }
@@ -153,11 +155,13 @@ export class GridsterRenderer {
   }
 
   getGridRowStyle(i: number): CommonGridStyle {
-    const margin = this.gridster.$options().margin;
+    const $options = this.gridster.$options();
+    const margin = $options.margin;
+    const trailingMargin = $options.outerMargin ? margin : -margin;
     // generates the new style
     const newPos: GridRowCachedStyle = {
       top: this.gridster.curRowHeight * i,
-      width: this.gridster.gridColumns.length * this.gridster.curColWidth + margin,
+      width: this.gridster.gridColumns.length * this.gridster.curColWidth + trailingMargin,
       height: this.gridster.curRowHeight - margin,
       style: {}
     };

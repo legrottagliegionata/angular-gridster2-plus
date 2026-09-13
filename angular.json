@@ -3,7 +3,7 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "analytics": "43f0cc4d-52e0-4bb5-a18d-b0bb569a75d1",
+    "analytics": false,
     "schematicCollections": [
       "angular-eslint"
     ]
@@ -41,7 +41,7 @@
           },
           "configurations": {
             "production": {
-              "baseHref": "/angular-gridster2/",
+              "baseHref": "/angular-gridster2-plus/",
               "budgets": [
                 {
                   "type": "initial",
@@ -83,9 +83,9 @@
           "builder": "angular-cli-ghpages:deploy",
           "options": {
             "buildTarget": "gridster-app:build:production",
-            "repo": "https://GH_TOKEN@github.com/tiberiuzuld/angular-gridster2.git",
-            "name": "Tiberiu Zuld",
-            "email": "tiberiuzuld@gmail.com",
+            "repo": "https://github.com/legrottagliegionata/angular-gridster2-plus.git",
+            "name": "github-actions[bot]",
+            "email": "41898282+github-actions[bot]@users.noreply.github.com",
             "dir": "dist/demo/browser"
           }
         },

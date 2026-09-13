@@ -41,13 +41,13 @@ export class GridsterResizable {
     sw: false,
     nw: false
   });
-  mousemove: () => void;
-  mouseup: () => void;
-  mouseleave: () => void;
-  cancelOnBlur: () => void;
-  touchmove: () => void;
-  touchend: () => void;
-  touchcancel: () => void;
+  mousemove: (() => void) | null;
+  mouseup: (() => void) | null;
+  mouseleave: (() => void) | null;
+  cancelOnBlur: (() => void) | null;
+  touchmove: (() => void) | null;
+  touchend: (() => void) | null;
+  touchcancel: (() => void) | null;
   push: GridsterPush;
   pushResize: GridsterPushResize;
   minHeight: number;
@@ -80,6 +80,13 @@ export class GridsterResizable {
   ) {}
 
   destroy(): void {
+    if (this.mousemove && this.gridster) {
+      // the item is destroyed in the middle of a resize: release the grid interaction state
+      cancelScroll();
+      this.gridster.dragInProgress = false;
+      this.gridster.movingItem = null;
+    }
+    this.removeDragListeners();
     this.gridster?.previewStyle();
     this.gridster = this.gridsterItem = null!;
   }
@@ -244,13 +251,7 @@ export class GridsterResizable {
     e.stopPropagation();
     e.preventDefault();
     cancelScroll();
-    this.mousemove();
-    this.mouseup();
-    this.mouseleave();
-    this.cancelOnBlur();
-    this.touchmove();
-    this.touchend();
-    this.touchcancel();
+    this.removeDragListeners();
     this.gridster.dragInProgress = false;
     this.resizeEventScrollType = {
       west: false,
@@ -266,19 +267,30 @@ export class GridsterResizable {
       this.makeResize();
     }
     setTimeout(() => {
-      this.gridsterItem.renderer.removeClass(this.gridsterItem.el, 'gridster-item-resizing');
-      this.gridsterItem.isResizing.set(false);
       if (this.gridster) {
+        this.gridsterItem.renderer.removeClass(this.gridsterItem.el, 'gridster-item-resizing');
+        this.gridsterItem.isResizing.set(false);
         this.gridster.movingItem = null;
         this.gridster.previewStyle();
       }
     });
   };
 
+  private removeDragListeners(): void {
+    this.mousemove?.();
+    this.mouseup?.();
+    this.mouseleave?.();
+    this.cancelOnBlur?.();
+    this.touchmove?.();
+    this.touchend?.();
+    this.touchcancel?.();
+    this.mousemove = this.mouseup = this.mouseleave = this.cancelOnBlur = this.touchmove = this.touchend = this.touchcancel = null!;
+  }
+
   cancelResize = (): void => {
     const push = this.push;
     const pushResize = this.pushResize;
-    if (!push && !pushResize) {
+    if (!this.gridsterItem || (!push && !pushResize)) {
       return;
     }
 
@@ -305,7 +317,7 @@ export class GridsterResizable {
   makeResize = (): void => {
     const push = this.push;
     const pushResize = this.pushResize;
-    if (!push && !pushResize) {
+    if (!this.gridsterItem || (!push && !pushResize)) {
       return;
     }
 

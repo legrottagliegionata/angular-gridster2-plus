@@ -94,8 +94,11 @@ export class GridsterItem implements OnInit, OnDestroy {
   init: boolean;
   isMoving = signal(false);
   isResizing = signal(false);
+  // layerIndex is mutated in place on item(): bump the version so zIndex reacts to bringToFront/sendToBack
+  private readonly layerIndexVersion = signal(0);
 
   zIndex = computed(() => {
+    this.layerIndexVersion();
     const base = this.getLayerIndex() + this.gridster.$options().baseLayerIndex;
     return this.isMoving() || this.isResizing() ? base + 1 : base;
   });
@@ -236,6 +239,7 @@ export class GridsterItem implements OnInit, OnDestroy {
     if (layerIndex < topIndex) {
       const targetIndex = offset ? layerIndex + offset : topIndex;
       this.item().layerIndex = this.$item().layerIndex = targetIndex > topIndex ? topIndex : targetIndex;
+      this.layerIndexVersion.update(version => version + 1);
     }
   }
 
@@ -247,6 +251,7 @@ export class GridsterItem implements OnInit, OnDestroy {
     if (layerIndex > 0) {
       const targetIndex = offset ? layerIndex - offset : 0;
       this.item().layerIndex = this.$item().layerIndex = targetIndex < 0 ? 0 : targetIndex;
+      this.layerIndexVersion.update(version => version + 1);
     }
   }
 

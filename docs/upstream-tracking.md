@@ -32,12 +32,13 @@ Dependabot PRs are not tracked: dependencies are updated separately.
 | #1002 | nexiumbiz-debug     | Mobile items keep the desktop order (flex `order`)                | #924           | Changed: `flex-shrink: 0` on mobile items. Measured in the demo at 375px with transitions disabled: without it 174px items shrink to 68px (27px in a 400px grid)                     |
 | #1025 | Enrique Laffranconi | Feature: `enableEmptyCellHover` preview                           | –              | Changed: the hover only hides/replaces the preview it owns, click/contextmenu still ignore the click that ends another interaction. Checked in the demo                              |
 
-### Decision needed
+### Decided (2026-09-14), next pull request
 
-| PR    | Author          | Change                                                          | Fixes        | Notes                                                                                                                                                                   |
-| ----- | --------------- | --------------------------------------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| #1026 | dvwid           | Auto-scroll triggered by pointer position instead of item edges | #1012 (#979) | Standard DnD behaviour and fixes oversized items, but changes UX for everyone (with the default `scrollSensitivity: 10` the pointer must reach the edge). Overlaps #988 |
-| #988  | nexiumbiz-debug | Do not auto-scroll towards an edge the pointer moves away from  | #979 #784    | Conflicts with #1026; mostly redundant if #1026 is taken                                                                                                                |
+| PR    | Author          | Decision                                                                                                                 |
+| ----- | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| #1026 | dvwid           | Integrate: auto-scroll is triggered by the pointer position (fixes #1012, and #979 in practice)                          |
+| #988  | nexiumbiz-debug | Dropped, superseded by #1026                                                                                             |
+| #1009 | nexiumbiz-debug | Rework and integrate: `ResizeObserver` on by default, turned off together with `disableWindowResize`, callback in NgZone |
 
 ### Needs rework / rejected
 
@@ -47,19 +48,24 @@ Dependabot PRs are not tracked: dependencies are updated separately.
 | #1011 | nexiumbiz-debug | Reposition the dragged item on grid scroll | #735  | Rejected as-is: during auto-scroll `gridsterScroll` already adds the scroll delta to the pointer position, the new scroll listener adds it again from `scrollTop`, so the item runs ahead. Needs a single source of truth for pointer vs scroll offset |
 | #987  | nexiumbiz-debug | `ignoreMarginInRow` item sizing            | #977  | Rejected: changes the intended semantics. `ignoreMarginInRow` was added by #227 (for #224) to make the row pitch `fixedRowHeight` while still subtracting one margin per item. #977 is a documentation problem                                         |
 
-## Bugs found by code review (no upstream PR)
+## Bugs found by code review
 
-| Where                                      | Problem                                                                                               |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| `gridsterRenderer.updateItem`              | Right outer margin is guarded by `outerMarginBottom !== null` instead of `outerMarginRight`           |
-| `gridsterRenderer.updateItem` (mobile)     | `DirTypes.LTR ? 'margin-right' : 'margin-left'` is a constant condition, RTL clears the wrong margin  |
-| `gridsterPushResize.restoreItems`          | Restores `$item.row` instead of `rows`                                                                |
-| `gridsterCompact.checkCompactItem`         | Missing `compactRight` and `compactRight&Up` (handled in `checkCompact`)                              |
-| `gridster.addItem` / `autoPositionItem`    | Warnings stringify the `item` signal instead of its value (prints `undefined`), `/n` instead of `\n`  |
-| `gridsterScroll.ts`                        | `window` accessed at module load: breaks SSR (#548)                                                   |
-| `gridsterEmptyCell.emptyCellMouseDown`     | `e instanceof TouchEvent` throws where `TouchEvent` is undefined (desktop Safari) on non-left buttons |
-| `gridster.calculateLayout` (`setGridSize`) | Grid size adds `margin` for both outer sides, ignoring `outerMarginLeft/Right/Top/Bottom` overrides   |
-| `gridsterItem.bringToFront/sendToBack`     | Mutate `item().layerIndex`, which the `zIndex` computed does not track (to verify)                    |
+Fixed on 2026-09-14, one commit per bug, each with a spec that fails on the previous code.
+
+| Where                                      | Problem                                                                                                     |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `gridsterRenderer.updateItem`              | Right outer margin guarded by `outerMarginBottom !== null` instead of `outerMarginRight`                    |
+| `gridsterRenderer.updateItem` (mobile)     | Constant condition `DirTypes.LTR ? 'margin-right' : 'margin-left'`: RTL items kept `margin-left`            |
+| `gridsterPushResize.restoreItems`          | Restored `$item.row` instead of `rows`                                                                      |
+| `gridsterCompact.checkCompactItem`         | No `compactRight` / `compactRight&Up` preview; movements now come from one table shared with `checkCompact` |
+| `gridster.addItem` / `autoPositionItem`    | Warnings printed `undefined` (the input signal instead of the item) and `/n`                                |
+| `gridster.calculateLayout` (`setGridSize`) | Grid size ignored `outerMarginLeft/Right/Top/Bottom`                                                        |
+| `gridster.setGridDimensions`               | `verticalFixed` rows shrank while dragging (#1003 only covered `scrollVertical`)                            |
+| `gridsterScroll.ts`                        | `window` read at module load, breaking server-side rendering (#548)                                         |
+| `gridsterEmptyCell.emptyCellMouseDown`     | `instanceof TouchEvent` threw where `TouchEvent` is undefined                                               |
+| `gridsterItem.bringToFront/sendToBack`     | `zIndex` did not update until the next drag or resize                                                       |
+
+Still open: `gridster.checkIfMobile` reads the global `document` when `useBodyForBreakpoint` is set, which fails during server-side rendering with that option.
 
 ## Upstream issues already fixed in code but still open
 

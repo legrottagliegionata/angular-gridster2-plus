@@ -1,5 +1,5 @@
 import { NO_ERRORS_SCHEMA, provideZonelessChangeDetection, signal } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { Gridster } from '../gridster';
 import { GridType } from '../gridsterConfig';
@@ -8,31 +8,31 @@ import { GridsterItem } from '../gridsterItem';
 import { GridsterPreview } from '../gridsterPreview';
 
 describe('Gridster', () => {
-  let fixture: ComponentFixture<Gridster>;
-  let gridster: Gridster;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       providers: [provideZonelessChangeDetection()],
       imports: [Gridster, GridsterItem, GridsterPreview],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
+  });
 
-    fixture = TestBed.createComponent(Gridster);
-    gridster = fixture.componentInstance;
+  function createGridster(gridType: GridType): Gridster {
+    const gridster = TestBed.createComponent(Gridster).componentInstance;
     Object.defineProperty(gridster, 'options', {
       value: signal({
         ...GridsterConfigService,
-        gridType: GridType.ScrollVertical,
+        gridType,
         mobileBreakpoint: 0,
         minRows: 1,
         addEmptyRowsCount: 0,
         disableWarnings: true
       })
     });
-  });
+    return gridster;
+  }
 
-  it('keeps scrollVertical rows from shrinking while dragging', () => {
+  it.each([GridType.ScrollVertical, GridType.VerticalFixed])('keeps %s rows from shrinking while dragging', gridType => {
+    const gridster = createGridster(gridType);
     gridster.rows = 12;
     gridster.dragInProgress = true;
     gridster.grid = [

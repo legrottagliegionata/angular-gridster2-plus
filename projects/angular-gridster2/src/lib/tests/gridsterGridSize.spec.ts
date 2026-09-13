@@ -67,4 +67,31 @@ describe('gridster component', () => {
 
     expect(gridsterComponent.el.style.width).toBe('300px');
   });
+
+  it('adds the outer margin overrides to the fixed grid size', async () => {
+    fixture.componentRef.setInput('options', {
+      gridType: 'fixed',
+      setGridSize: true,
+      outerMargin: true,
+      outerMarginLeft: 50,
+      outerMarginRight: 20,
+      outerMarginTop: 40,
+      outerMarginBottom: 0,
+      minCols: 2,
+      minRows: 2,
+      fixedColWidth: 100,
+      fixedRowHeight: 100,
+      mobileBreakpoint: 0,
+      margin: 10
+    });
+    fixture.detectChanges();
+
+    await fixture.whenStable();
+
+    gridsterComponent.api.calculateLayout();
+
+    // 2 cells of 110px, minus the trailing gap, plus the left/right (top/bottom) outer margins
+    expect(gridsterComponent.el.style.width).toBe('280px');
+    expect(gridsterComponent.el.style.height).toBe('250px');
+  });
 });

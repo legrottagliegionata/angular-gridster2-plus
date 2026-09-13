@@ -247,6 +247,11 @@ export class GridsterEmptyCell {
         item.y = oldItem.y - item.rows + 1;
       }
     }
+    if (!oldItem) {
+      // keep click/drop items inside the grid; drag-to-create keeps its anchor cell
+      item.x = Math.min(item.x, Math.max($options.maxCols - item.cols, 0));
+      item.y = Math.min(item.y, Math.max($options.maxRows - item.rows, 0));
+    }
     if (!$options.enableOccupiedCellDrop && this.gridster.checkCollision(item)) {
       return;
     }

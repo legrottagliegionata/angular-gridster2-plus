@@ -273,8 +273,9 @@ export class Gridster implements OnInit, OnDestroy {
 
     this.setGridDimensions();
     const $options = this.$options();
+    let marginWidth = -$options.margin;
+    let marginHeight = -$options.margin;
     if ($options.outerMargin) {
-      let marginWidth = -$options.margin;
       if ($options.outerMarginLeft !== null) {
         marginWidth += $options.outerMarginLeft;
         this.renderer.setStyle(this.el, 'padding-left', $options.outerMarginLeft + 'px');
@@ -290,7 +291,6 @@ export class Gridster implements OnInit, OnDestroy {
         this.renderer.setStyle(this.el, 'padding-right', $options.margin + 'px');
       }
       this.curColWidth = (this.curWidth - marginWidth) / this.columns;
-      let marginHeight = -$options.margin;
       if ($options.outerMarginTop !== null) {
         marginHeight += $options.outerMarginTop;
         this.renderer.setStyle(this.el, 'padding-top', $options.outerMarginTop + 'px');
@@ -319,9 +319,8 @@ export class Gridster implements OnInit, OnDestroy {
     if ($options.setGridSize) {
       this.renderer.addClass(this.el, 'gridSize');
       if (!this.mobile) {
-        const outerMarginSize = $options.outerMargin ? $options.margin : -$options.margin;
-        this.renderer.setStyle(this.el, 'width', this.columns * this.curColWidth + outerMarginSize + 'px');
-        this.renderer.setStyle(this.el, 'height', this.rows * this.curRowHeight + outerMarginSize + 'px');
+        this.renderer.setStyle(this.el, 'width', this.columns * this.curColWidth + marginWidth + 'px');
+        this.renderer.setStyle(this.el, 'height', this.rows * this.curRowHeight + marginHeight + 'px');
       }
     } else {
       this.renderer.removeClass(this.el, 'gridSize');

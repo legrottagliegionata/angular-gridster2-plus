@@ -71,7 +71,7 @@ Dependabot PRs are not tracked: dependencies are updated separately.
 
 ## Lint
 
-`ng lint angular-gridster2` is red on upstream master (checked 2026-09-14): 32 problems, mostly `consistent-type-definitions` on exported `type`s, `prefer-for-of`, `no-inferrable-types` and `any`/unused variables in `gridsterUtils.spec.ts`. The integration branch adds none. Switching the public `type`s to `interface` is an API-visible change to plan separately.
+`ng lint angular-gridster2` is red on upstream master (checked 2026-09-14): 36 problems, mostly `consistent-type-definitions` on exported `type`s, `prefer-for-of`, `no-inferrable-types` and `any`/unused variables in `gridsterUtils.spec.ts`. The integration branch brings them down to 32 (upstream #1006 removes the four redundant `: string` annotations in `gridsterPush.ts`) and adds none. Switching the public `type`s to `interface` is an API-visible change to plan separately.
 
 ## Issue triage
 

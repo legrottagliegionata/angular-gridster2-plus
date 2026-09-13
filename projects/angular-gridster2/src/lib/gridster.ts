@@ -80,6 +80,7 @@ export class Gridster implements OnInit, OnDestroy {
 
   private resize$ = new Subject<void>();
   private destroy$ = new Subject<void>();
+  private resizeObserver: ResizeObserver | null = null;
 
   constructor() {
     effect(() => {
@@ -90,6 +91,7 @@ export class Gridster implements OnInit, OnDestroy {
         this.windowResize();
         this.windowResize = null;
       }
+      this.toggleResizeObserver(!$options.disableWindowResize);
       this.emptyCell.updateOptions();
       this.columns = $options.minCols;
       this.rows = $options.minRows + $options.addEmptyRowsCount;
@@ -162,11 +164,24 @@ export class Gridster implements OnInit, OnDestroy {
     }
   }
 
+  // the host can change size without a window resize (collapsible panels, split views)
+  private toggleResizeObserver(enabled: boolean): void {
+    if (enabled && !this.resizeObserver && typeof ResizeObserver !== 'undefined') {
+      // resize() only recalculates when the size really changed, so a window resize is not applied twice
+      this.resizeObserver = new ResizeObserver(() => this.zone.run(() => this.resize()));
+      this.resizeObserver.observe(this.el);
+    } else if (!enabled && this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     if (this.windowResize) {
       this.windowResize();
     }
+    this.toggleResizeObserver(false);
     const options = this.options();
     if (options && options.destroyCallback) {
       options.destroyCallback(this);

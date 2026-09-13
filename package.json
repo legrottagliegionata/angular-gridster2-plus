@@ -1,5 +1,5 @@
 {
-  "name": "angular-gridster2",
+  "name": "angular-gridster2-plus",
   "version": "22.0.0",
   "license": "MIT",
   "scripts": {
@@ -17,15 +17,15 @@
     "deploy": "ng deploy",
     "prepare": "husky"
   },
-  "homepage": "https://tiberiuzuld.github.io/angular-gridster2",
+  "homepage": "https://legrottagliegionata.github.io/angular-gridster2-plus",
   "bugs": {
-    "url": "https://github.com/tiberiuzuld/angular-gridster2/issues"
+    "url": "https://github.com/legrottagliegionata/angular-gridster2-plus/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tiberiuzuld/angular-gridster2.git"
+    "url": "git+https://github.com/legrottagliegionata/angular-gridster2-plus.git"
   },
-  "description": "Angular gridster 2",
+  "description": "Angular gridster 2, community-maintained fork of angular-gridster2",
   "keywords": [
     "angular",
     "angular2",
@@ -35,10 +35,12 @@
     "gridster2",
     "resize",
     "drag&drop",
-    "widgets"
+    "widgets",
+    "angular-gridster2"
   ],
-  "authors": [
-    "Tiberiu Zuld"
+  "author": "Gionata Legrottaglie (https://github.com/legrottagliegionata)",
+  "contributors": [
+    "Tiberiu Zuld (https://github.com/tiberiuzuld)"
   ],
   "files": [
     "dist/*"

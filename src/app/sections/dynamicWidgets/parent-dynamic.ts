@@ -1,5 +1,5 @@
 import { Component, EventEmitter, input, ViewEncapsulation } from '@angular/core';
-import { GridsterItemConfig } from 'angular-gridster2';
+import { GridsterItemConfig } from 'angular-gridster2-plus';
 import { WidgetA } from './widget-a';
 import { WidgetB } from './widget-b';
 import { WidgetC } from './widget-c';

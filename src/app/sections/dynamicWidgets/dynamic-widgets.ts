@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnDestroy, ViewEncapsulation } from '@angular/
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { DisplayGrid, Gridster, GridsterConfig, GridsterItem, GridsterItemConfig, GridType } from 'angular-gridster2';
+import { DisplayGrid, Gridster, GridsterConfig, GridsterItem, GridsterItemConfig, GridType } from 'angular-gridster2-plus';
 import { MarkdownComponent } from 'ngx-markdown';
 import { ParentDynamic } from './parent-dynamic';
 

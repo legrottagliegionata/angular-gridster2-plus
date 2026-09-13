@@ -17,7 +17,7 @@
     "target": "ES2022",
     "module": "preserve",
     "paths": {
-      "angular-gridster2": [
+      "angular-gridster2-plus": [
         "./dist/angular-gridster2",
         "./projects/angular-gridster2/src/public_api.ts"
       ]

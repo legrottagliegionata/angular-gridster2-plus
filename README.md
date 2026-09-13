@@ -1,15 +1,15 @@
-# angular-gridster2
+# angular-gridster2-plus
 
-[![npm version](https://badge.fury.io/js/angular-gridster2.svg)](https://badge.fury.io/js/angular-gridster2)
-![Node CI](https://github.com/tiberiuzuld/angular-gridster2/actions/workflows/deploy-demo.yml/badge.svg)
-[![downloads](https://img.shields.io/npm/dm/angular-gridster2.svg)](https://www.npmjs.com/package/angular-gridster2)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/tiberiuzuld)
+[![npm version](https://badge.fury.io/js/angular-gridster2-plus.svg)](https://www.npmjs.com/package/angular-gridster2-plus)
+[![Deploy demo](https://github.com/legrottagliegionata/angular-gridster2-plus/actions/workflows/deploy-demo.yml/badge.svg)](https://github.com/legrottagliegionata/angular-gridster2-plus/actions/workflows/deploy-demo.yml)
+[![downloads](https://img.shields.io/npm/dm/angular-gridster2-plus.svg)](https://www.npmjs.com/package/angular-gridster2-plus)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/gionatalegrottaglie)
 
-### Angular implementation of angular-gridster [Demo](http://tiberiuzuld.github.io/angular-gridster2)
+### Angular implementation of angular-gridster [Demo](https://legrottagliegionata.github.io/angular-gridster2-plus)
+
+Community-maintained fork of [angular-gridster2](https://github.com/tiberiuzuld/angular-gridster2) by [Tiberiu Zuld](https://github.com/tiberiuzuld), which is no longer actively developed. It keeps the same API and integrates the fixes contributed by the community.
 
 ### Requires Angular 22.x
-
-### For other Angular versions check the other branches.
 
 ## Browser support
 
@@ -17,13 +17,27 @@ What Angular supports [here](https://github.com/angular/angular)
 
 ## Install
 
-`npm install angular-gridster2 --save`
+`npm install angular-gridster2-plus --save`
+
+### Migrating from angular-gridster2
+
+The API is the same: replace the package and update the import paths.
+
+```bash
+npm uninstall angular-gridster2
+npm install angular-gridster2-plus --save
+```
+
+```typescript
+// before: import { Gridster, GridsterItem } from 'angular-gridster2';
+import { Gridster, GridsterItem } from 'angular-gridster2-plus';
+```
 
 ## How to use
 
 ```javascript
 import {Component} from '@angular/core';
-import {Gridster, GridsterItem} from 'angular-gridster2';
+import {Gridster, GridsterItem} from 'angular-gridster2-plus';
 
 @Component({
   standalone: true,
@@ -45,7 +59,7 @@ import {Gridster, GridsterItem} from 'angular-gridster2';
 Initialize a simple dashboard:
 
 ```typescript
-   import { GridsterConfig, GridsterItemConfig }  from 'angular-gridster2';
+   import { GridsterConfig, GridsterItemConfig }  from 'angular-gridster2-plus';
    options: GridsterConfig;
    dashboard: GridsterItemConfig[];
 
@@ -86,7 +100,7 @@ Initialize a simple dashboard:
 
 ### Having iFrame in widgets content
 
-iFrames can interfere with drag/resize of widgets. For a workaround please read [this issue #233](https://github.com/tiberiuzuld/angular-gridster2/issues/233)
+iFrames can interfere with drag/resize of widgets. For a workaround please read [angular-gridster2 issue #233](https://github.com/tiberiuzuld/angular-gridster2/issues/233)
 
 ### Interact with content without dragging
 
@@ -122,12 +136,15 @@ Option 2 (with text selection):
 </gridster-item>
 ```
 
-### Contributors [here](https://github.com/tiberiuzuld/angular-gridster2/graphs/contributors)
+### Contributors [here](https://github.com/legrottagliegionata/angular-gridster2-plus/graphs/contributors)
 
-### [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/tiberiuzuld)
+Originally created by [Tiberiu Zuld](https://github.com/tiberiuzuld) as [angular-gridster2](https://github.com/tiberiuzuld/angular-gridster2).
+
+### [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/gionatalegrottaglie)
 
 ### License
 
 The MIT License
 
 Copyright (c) 2026 Tiberiu Zuld
+Copyright (c) 2026 Gionata Legrottaglie

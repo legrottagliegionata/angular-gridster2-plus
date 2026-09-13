@@ -1,5 +1,5 @@
 import { Component, EventEmitter, input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { GridsterItemConfig } from 'angular-gridster2';
+import { GridsterItemConfig } from 'angular-gridster2-plus';
 import { Subscription } from 'rxjs';
 
 @Component({

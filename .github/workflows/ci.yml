@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Install
+        run: npm ci --legacy-peer-deps
+      - name: Test library
+        run: npm run test-lib -- --watch=false
+      - name: Build library
+        run: npm run build-lib
+      - name: Build demo
+        run: npx ng build gridster-app

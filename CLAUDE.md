@@ -64,3 +64,4 @@ gridsterScroll.ts                 edge auto-scroll; keeps its state in MODULE-LE
 - Specs run zoneless (`provideZonelessChangeDetection`) under jsdom: no real layout, so `offsetWidth`, `getBoundingClientRect` etc. are 0 unless stubbed.
 - Hand-written `GridsterItem` mocks must include the `isMoving` / `isResizing` signals used by drag/resize start/stop.
 - Coverage of push/swap/resize logic is thin: add focused specs when touching it.
+- When measuring layout in the demo from scripts, disable `transition` on `gridster-item` first: its `transition: .3s` animates sizes and even `flex-shrink`, so values are read mid-animation.

@@ -2,7 +2,7 @@
 
 State of the work imported from [tiberiuzuld/angular-gridster2](https://github.com/tiberiuzuld/angular-gridster2). Numbers refer to upstream issues/PRs. Integration happens on branch `integrate/upstream-prs`, one squashed commit per PR, keeping the original author.
 
-Last update: 2026-09-13.
+Last update: 2026-09-14.
 
 ## Community pull requests
 
@@ -10,30 +10,27 @@ Dependabot PRs are not tracked: dependencies are updated separately.
 
 ### Integrated
 
-| PR    | Author          | Change                                                            | Fixes          | Notes                                                                                                                                                                                |
-| ----- | --------------- | ----------------------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| #1028 | Markus Mächler  | Auto-scroll reaches the very top/bottom                           | #1027          |                                                                                                                                                                                      |
-| #993  | nexiumbiz-debug | Chained push cannot land on the dragged item; rollback path index | #941, #715     | #941 symptom was already fixed by #955; upstream spec relied on the fallback removed there and was rewritten                                                                         |
-| #990  | nexiumbiz-debug | Display grid rows fit the grid without outer margin               | #922           |                                                                                                                                                                                      |
-| #998  | nexiumbiz-debug | Empty-cell drag ignores mousedown on the scrollbar                | #894           |                                                                                                                                                                                      |
-| #1006 | nexiumbiz-debug | Push attempts as a loop                                           | #943           | Rewritten on top of #955 (3 attempts instead of 4)                                                                                                                                   |
-| #994  | nexiumbiz-debug | Remove listeners on destroy, ignore late stop events              | #849 #850 #864 | Extended: also removes the `contextmenu` listener, releases `dragInProgress`/`movingItem` when destroyed mid-interaction, guards `makeDrag`/`cancelDrag`/`makeResize`/`cancelResize` |
+"Changed" means the upstream patch was modified before integration; every change has a spec that fails with the upstream version.
 
-### To integrate
-
-| PR    | Author              | Change                                                | Fixes      | Notes                                                                                                                                                           |
-| ----- | ------------------- | ----------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| #997  | nexiumbiz-debug     | Reset `lastMouse` between drags                       | #854 (1/2) | Spec conflict only                                                                                                                                              |
-| #1008 | nexiumbiz-debug     | Reset `positionX/Y` after a rejected `stop`           | #694       | Spec conflict only                                                                                                                                              |
-| #989  | nexiumbiz-debug     | `setGridSize` without outer margin                    | #920 #845  | Spec conflict only                                                                                                                                              |
-| #1000 | nexiumbiz-debug     | Clamp loaded item size to min/max limits              | #284       | Spec conflict only. Rewrites the user's item and emits `itemChange`                                                                                             |
-| #1001 | nexiumbiz-debug     | `getNextPossiblePosition` keeps a valid existing item | #907       | Spec conflict only                                                                                                                                              |
-| #1003 | nexiumbiz-debug     | `scrollVertical` rows do not shrink while dragging    | #794       | Spec conflict only. Consider `verticalFixed` too                                                                                                                |
-| #999  | nexiumbiz-debug     | Empty-cell drag honours `minItemCols/Rows`            | #417       | Spec conflict only                                                                                                                                              |
-| #992  | nexiumbiz-debug     | Clamp empty-cell drop inside the grid                 | #912       | Needs change: clamp only click/drop items, not drag-to-create (it would move the drag anchor)                                                                   |
-| #991  | nexiumbiz-debug     | RTL empty-cell drop X                                 | #909       | Needs change: `scrollLeft` is negative in RTL and must be subtracted, as the drag code already does                                                             |
-| #1002 | nexiumbiz-debug     | Mobile items keep the desktop order (flex `order`)    | #924       | Needs change: `gridster-item` has `overflow: hidden`, so in a flex column its min-height is 0 and items get squashed; add `flex-shrink: 0`. Verify in a browser |
-| #1025 | Enrique Laffranconi | Feature: `enableEmptyCellHover` preview               | –          | Needs change: the click/contextmenu guard must keep ignoring the click that ends an item drag (`movingItem` set by a drag, not by the hover)                    |
+| PR    | Author              | Change                                                            | Fixes          | Notes                                                                                                                                                                                |
+| ----- | ------------------- | ----------------------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| #1028 | Markus Mächler      | Auto-scroll reaches the very top/bottom                           | #1027          |                                                                                                                                                                                      |
+| #993  | nexiumbiz-debug     | Chained push cannot land on the dragged item; rollback path index | #941, #715     | #941 symptom was already fixed by #955; upstream spec relied on the fallback removed there and was rewritten                                                                         |
+| #990  | nexiumbiz-debug     | Display grid rows fit the grid without outer margin               | #922           |                                                                                                                                                                                      |
+| #998  | nexiumbiz-debug     | Empty-cell drag ignores mousedown on the scrollbar                | #894           |                                                                                                                                                                                      |
+| #1006 | nexiumbiz-debug     | Push attempts as a loop                                           | #943           | Rewritten on top of #955 (3 attempts instead of 4)                                                                                                                                   |
+| #994  | nexiumbiz-debug     | Remove listeners on destroy, ignore late stop events              | #849 #850 #864 | Extended: also removes the `contextmenu` listener, releases `dragInProgress`/`movingItem` when destroyed mid-interaction, guards `makeDrag`/`cancelDrag`/`makeResize`/`cancelResize` |
+| #1008 | nexiumbiz-debug     | Reset `positionX/Y` after a rejected `stop`                       | #694           |                                                                                                                                                                                      |
+| #989  | nexiumbiz-debug     | `setGridSize` without outer margin                                | #920 #845      |                                                                                                                                                                                      |
+| #1000 | nexiumbiz-debug     | Clamp loaded item size to min/max limits                          | #284           | Rewrites the user's item and emits `itemChange`                                                                                                                                      |
+| #1001 | nexiumbiz-debug     | `getNextPossiblePosition` keeps a valid existing item             | #907           |                                                                                                                                                                                      |
+| #1003 | nexiumbiz-debug     | `scrollVertical` rows do not shrink while dragging                | #794           | `verticalFixed` probably needs the same treatment                                                                                                                                    |
+| #997  | nexiumbiz-debug     | Reset `lastMouse` at the start of every drag                      | #854 (1/2)     | Spec mock gained `isMoving`                                                                                                                                                          |
+| #999  | nexiumbiz-debug     | Empty-cell drag honours `minItemCols/Rows`                        | #417           |                                                                                                                                                                                      |
+| #992  | nexiumbiz-debug     | Clamp empty-cell click/drop items inside the grid                 | #912           | Changed: no clamp during drag-to-create, it moved the anchor cell                                                                                                                    |
+| #991  | nexiumbiz-debug     | RTL empty-cell X position                                         | #909           | Changed: RTL subtracts the negative `scrollLeft` and uses the right outer margin                                                                                                     |
+| #1002 | nexiumbiz-debug     | Mobile items keep the desktop order (flex `order`)                | #924           | Changed: `flex-shrink: 0` on mobile items. Measured in the demo at 375px with transitions disabled: without it 174px items shrink to 68px (27px in a 400px grid)                     |
+| #1025 | Enrique Laffranconi | Feature: `enableEmptyCellHover` preview                           | –              | Changed: the hover only hides/replaces the preview it owns, click/contextmenu still ignore the click that ends another interaction. Checked in the demo                              |
 
 ### Decision needed
 
@@ -67,6 +64,10 @@ Dependabot PRs are not tracked: dependencies are updated separately.
 ## Upstream issues already fixed in code but still open
 
 #810 (optional chaining in resizable destroy), #916 (zoneless works, upstream #917), #941 (fixed by #955), likely #830.
+
+## Notes for browser checks
+
+`gridster-item` has `transition: .3s` on every property: disable transitions before measuring layout from scripts, otherwise sizes and even `flex-shrink` are read mid-animation.
 
 ## Issue triage
 

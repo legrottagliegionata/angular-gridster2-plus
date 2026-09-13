@@ -378,8 +378,8 @@ export class Gridster implements OnInit, OnDestroy {
       if (!$options.disableWarnings) {
         itemComponent.notPlaced = true;
         console.warn(
-          "Can't be placed in the bounds of the dashboard, trying to auto position!/n" +
-            JSON.stringify(itemComponent.item, ['cols', 'rows', 'x', 'y'])
+          "Can't be placed in the bounds of the dashboard, trying to auto position!\n" +
+            JSON.stringify(itemComponent.item(), ['cols', 'rows', 'x', 'y'])
         );
       }
       if (!$options.disableAutoPositionOnConflict) {
@@ -498,7 +498,7 @@ export class Gridster implements OnInit, OnDestroy {
     } else {
       itemComponent.notPlaced = true;
       if (!this.$options().disableWarnings) {
-        console.warn("Can't be placed in the bounds of the dashboard!/n" + JSON.stringify(itemComponent.item, ['cols', 'rows', 'x', 'y']));
+        console.warn("Can't be placed in the bounds of the dashboard!\n" + JSON.stringify(itemComponent.item(), ['cols', 'rows', 'x', 'y']));
       }
     }
   }

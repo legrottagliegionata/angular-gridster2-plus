@@ -49,7 +49,7 @@ export class GridsterPushResize {
       $item.x = item.x || 0;
       $item.y = item.y || 0;
       $item.cols = item.cols || 1;
-      $item.row = item.row || 1;
+      $item.rows = item.rows || 1;
       pushedItem.setSize();
     }
     this.pushedItems = [];

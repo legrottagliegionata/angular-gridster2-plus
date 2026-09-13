@@ -4,7 +4,7 @@ import { GridsterRenderer } from '../gridsterRenderer';
 
 describe('gridsterRenderer service', () => {
   it('keeps display grid rows inside the usable width without outer margin', () => {
-    const gridster: any = {
+    const gridster = {
       $options: signal({
         margin: 20,
         outerMargin: false,
@@ -14,7 +14,7 @@ describe('gridsterRenderer service', () => {
       curColWidth: 25,
       curRowHeight: 61
     };
-    const renderer = new GridsterRenderer(gridster);
+    const renderer = new GridsterRenderer(gridster as never);
 
     expect(renderer.getGridRowStyle(0).width).toBe('580px');
   });

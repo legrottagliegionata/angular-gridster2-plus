@@ -3,7 +3,7 @@ import { signal } from '@angular/core';
 import { GridsterEmptyCell } from '../gridsterEmptyCell';
 
 function createEmptyCell() {
-  const gridster: any = {
+  const gridster = {
     options: signal({ scale: 1 }),
     $options: signal({
       defaultItemCols: 6,
@@ -34,7 +34,7 @@ function createEmptyCell() {
     checkCollision: vi.fn(() => false)
   };
 
-  return { emptyCell: new GridsterEmptyCell(gridster), gridster };
+  return { emptyCell: new GridsterEmptyCell(gridster as never), gridster };
 }
 
 function mouseAt(clientX: number, clientY: number): MouseEvent {

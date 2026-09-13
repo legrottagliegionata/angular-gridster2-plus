@@ -4,7 +4,7 @@ import { DirTypes } from '../gridsterConfig';
 import { GridsterEmptyCell } from '../gridsterEmptyCell';
 
 function createEmptyCell($options: Record<string, unknown>, scrollLeft = 0): GridsterEmptyCell {
-  const gridster: any = {
+  const gridster = {
     options: signal({ scale: 1 }),
     $options: signal($options),
     el: { scrollLeft },
@@ -13,7 +13,7 @@ function createEmptyCell($options: Record<string, unknown>, scrollLeft = 0): Gri
     }
   };
 
-  return new GridsterEmptyCell(gridster);
+  return new GridsterEmptyCell(gridster as never);
 }
 
 describe('gridsterEmptyCell horizontal position', () => {

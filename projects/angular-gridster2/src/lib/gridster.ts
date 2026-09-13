@@ -253,7 +253,7 @@ export class Gridster implements OnInit, OnDestroy {
       }
     }
     rows += $options.addEmptyRowsCount;
-    if (this.dragInProgress && $options.gridType === GridType.ScrollVertical) {
+    if (this.dragInProgress && ($options.gridType === GridType.ScrollVertical || $options.gridType === GridType.VerticalFixed)) {
       rows = Math.max(rows, this.rows);
     }
     if (this.columns !== columns || this.rows !== rows) {

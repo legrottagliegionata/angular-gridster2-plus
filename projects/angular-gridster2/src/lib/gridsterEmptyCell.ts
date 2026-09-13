@@ -166,7 +166,7 @@ export class GridsterEmptyCell {
     e.stopPropagation();
     const item = this.getValidItemFromEvent(e);
     const leftMouseButtonCode = 1;
-    if (!item || (e.buttons !== leftMouseButtonCode && !(e instanceof TouchEvent))) {
+    if (!item || (e.buttons !== leftMouseButtonCode && e.type !== 'touchstart')) {
       return;
     }
     this.initialItem = item;

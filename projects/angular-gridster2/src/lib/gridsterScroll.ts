@@ -21,17 +21,23 @@ let maxScrollY = Infinity;
 
 /**
  * "requestAnimation" frame is widely supported, but some server engines,
- * such as deno currently do not support it so we do a fallback to setTimeout
+ * such as deno currently do not support it so we do a fallback to setTimeout.
+ * The globals are looked up on every call: reading `window` while the module
+ * loads breaks server-side rendering.
  */
-let requestAnimation: (callback: (timestamp: number) => void) => number;
-let cancelAnimation: (id: number) => void;
+function requestAnimation(callback: (timestamp: number) => void): number {
+  if (typeof requestAnimationFrame === 'function') {
+    return requestAnimationFrame(callback);
+  }
+  return setTimeout(() => callback(Date.now()), 50) as unknown as number;
+}
 
-if (window.requestAnimationFrame && window.cancelAnimationFrame) {
-  requestAnimation = window.requestAnimationFrame;
-  cancelAnimation = window.cancelAnimationFrame;
-} else {
-  requestAnimation = callback => setTimeout(() => callback(Date.now()), 50);
-  cancelAnimation = id => clearTimeout(id);
+function cancelAnimation(id: number): void {
+  if (typeof cancelAnimationFrame === 'function') {
+    cancelAnimationFrame(id);
+  } else {
+    clearTimeout(id);
+  }
 }
 
 type Position = Pick<MouseEvent, 'clientX' | 'clientY'>;

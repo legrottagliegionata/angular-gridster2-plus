@@ -1,4 +1,5 @@
 import { Gridster } from './gridster';
+import { DirTypes } from './gridsterConfig';
 import { GridsterItemConfig } from './gridsterItemConfig';
 import { GridsterUtils } from './gridsterUtils';
 
@@ -203,10 +204,21 @@ export class GridsterEmptyCell {
 
   getPixelsX(e: MouseEvent, rect: ClientRect): number {
     const scale = this.gridster.options().scale;
-    if (scale) {
-      return (e.clientX - rect.left) / scale + this.gridster.el.scrollLeft - this.gridster.gridRenderer.getLeftMargin();
+    const $options = this.gridster.$options();
+    let distanceFromStart: number;
+    let scrollOffset: number;
+    let startMargin: number;
+    if ($options.dirType === DirTypes.RTL) {
+      // RTL grids start at the right edge and scrollLeft becomes negative while scrolling to the left
+      distanceFromStart = rect.right - e.clientX;
+      scrollOffset = -this.gridster.el.scrollLeft;
+      startMargin = $options.outerMargin ? ($options.outerMarginRight ?? $options.margin) : 0;
+    } else {
+      distanceFromStart = e.clientX - rect.left;
+      scrollOffset = this.gridster.el.scrollLeft;
+      startMargin = this.gridster.gridRenderer.getLeftMargin();
     }
-    return e.clientX + this.gridster.el.scrollLeft - rect.left - this.gridster.gridRenderer.getLeftMargin();
+    return (scale ? distanceFromStart / scale : distanceFromStart) + scrollOffset - startMargin;
   }
 
   getPixelsY(e: MouseEvent, rect: ClientRect): number {

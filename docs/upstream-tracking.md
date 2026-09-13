@@ -1,6 +1,6 @@
 # Upstream tracking
 
-State of the work imported from [tiberiuzuld/angular-gridster2](https://github.com/tiberiuzuld/angular-gridster2). Numbers refer to upstream issues/PRs. Integration happens on branch `integrate/upstream-prs`, one squashed commit per PR, keeping the original author.
+State of the work imported from [tiberiuzuld/angular-gridster2](https://github.com/tiberiuzuld/angular-gridster2). Numbers refer to upstream issues/PRs. Upstream PRs are integrated through pull requests on this repository (the first batch in #1), one squashed commit per upstream PR, keeping the original author.
 
 Last update: 2026-09-14.
 

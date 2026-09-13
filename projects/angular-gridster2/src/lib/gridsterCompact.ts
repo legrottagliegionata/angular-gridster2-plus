@@ -3,6 +3,48 @@ import { CompactType } from './gridsterConfig';
 import { GridsterItem } from './gridsterItem';
 import { GridsterItemConfig } from './gridsterItemConfig';
 
+type CompactMovement = ['x' | 'y', number];
+
+// movements applied, in order, by each directional compact type
+const COMPACT_MOVEMENTS: Record<string, CompactMovement[]> = {
+  [CompactType.CompactUp]: [['y', -1]],
+  [CompactType.CompactLeft]: [['x', -1]],
+  [CompactType.CompactUpAndLeft]: [
+    ['y', -1],
+    ['x', -1]
+  ],
+  [CompactType.CompactLeftAndUp]: [
+    ['x', -1],
+    ['y', -1]
+  ],
+  [CompactType.CompactRight]: [['x', 1]],
+  [CompactType.CompactUpAndRight]: [
+    ['y', -1],
+    ['x', 1]
+  ],
+  [CompactType.CompactRightAndUp]: [
+    ['x', 1],
+    ['y', -1]
+  ],
+  [CompactType.CompactDown]: [['y', 1]],
+  [CompactType.CompactDownAndLeft]: [
+    ['y', 1],
+    ['x', -1]
+  ],
+  [CompactType.CompactLeftAndDown]: [
+    ['x', -1],
+    ['y', 1]
+  ],
+  [CompactType.CompactDownAndRight]: [
+    ['y', 1],
+    ['x', 1]
+  ],
+  [CompactType.CompactRightAndDown]: [
+    ['x', 1],
+    ['y', 1]
+  ]
+};
+
 export class GridsterCompact {
   constructor(private gridster: Gridster) {}
 
@@ -11,79 +53,24 @@ export class GridsterCompact {
   }
 
   checkCompact(): void {
-    const $options = this.gridster.$options();
-    if ($options.compactType !== CompactType.None) {
-      if ($options.compactType === CompactType.CompactUp) {
-        this.checkCompactMovement('y', -1);
-      } else if ($options.compactType === CompactType.CompactLeft) {
-        this.checkCompactMovement('x', -1);
-      } else if ($options.compactType === CompactType.CompactUpAndLeft) {
-        this.checkCompactMovement('y', -1);
-        this.checkCompactMovement('x', -1);
-      } else if ($options.compactType === CompactType.CompactLeftAndUp) {
-        this.checkCompactMovement('x', -1);
-        this.checkCompactMovement('y', -1);
-      } else if ($options.compactType === CompactType.CompactRight) {
-        this.checkCompactMovement('x', 1);
-      } else if ($options.compactType === CompactType.CompactUpAndRight) {
-        this.checkCompactMovement('y', -1);
-        this.checkCompactMovement('x', 1);
-      } else if ($options.compactType === CompactType.CompactRightAndUp) {
-        this.checkCompactMovement('x', 1);
-        this.checkCompactMovement('y', -1);
-      } else if ($options.compactType === CompactType.CompactDown) {
-        this.checkCompactMovement('y', 1);
-      } else if ($options.compactType === CompactType.CompactDownAndLeft) {
-        this.checkCompactMovement('y', 1);
-        this.checkCompactMovement('x', -1);
-      } else if ($options.compactType === CompactType.CompactDownAndRight) {
-        this.checkCompactMovement('y', 1);
-        this.checkCompactMovement('x', 1);
-      } else if ($options.compactType === CompactType.CompactLeftAndDown) {
-        this.checkCompactMovement('x', -1);
-        this.checkCompactMovement('y', 1);
-      } else if ($options.compactType === CompactType.CompactRightAndDown) {
-        this.checkCompactMovement('x', 1);
-        this.checkCompactMovement('y', 1);
-      } else if ($options.compactType === CompactType.CompactGrid) {
-        this.checkCompactGrid();
-      }
+    const compactType = this.gridster.$options().compactType;
+    if (compactType === CompactType.CompactGrid) {
+      this.checkCompactGrid();
+      return;
+    }
+    for (const [direction, delta] of COMPACT_MOVEMENTS[compactType] ?? []) {
+      this.checkCompactMovement(direction, delta);
     }
   }
 
   checkCompactItem(item: GridsterItemConfig): void {
-    const $options = this.gridster.$options();
-    if ($options.compactType !== CompactType.None) {
-      if ($options.compactType === CompactType.CompactUp) {
-        this.moveTillCollision(item, 'y', -1);
-      } else if ($options.compactType === CompactType.CompactLeft) {
-        this.moveTillCollision(item, 'x', -1);
-      } else if ($options.compactType === CompactType.CompactUpAndLeft) {
-        this.moveTillCollision(item, 'y', -1);
-        this.moveTillCollision(item, 'x', -1);
-      } else if ($options.compactType === CompactType.CompactLeftAndUp) {
-        this.moveTillCollision(item, 'x', -1);
-        this.moveTillCollision(item, 'y', -1);
-      } else if ($options.compactType === CompactType.CompactUpAndRight) {
-        this.moveTillCollision(item, 'y', -1);
-        this.moveTillCollision(item, 'x', 1);
-      } else if ($options.compactType === CompactType.CompactDown) {
-        this.moveTillCollision(item, 'y', 1);
-      } else if ($options.compactType === CompactType.CompactDownAndLeft) {
-        this.moveTillCollision(item, 'y', 1);
-        this.moveTillCollision(item, 'x', -1);
-      } else if ($options.compactType === CompactType.CompactLeftAndDown) {
-        this.moveTillCollision(item, 'x', -1);
-        this.moveTillCollision(item, 'y', 1);
-      } else if ($options.compactType === CompactType.CompactDownAndRight) {
-        this.moveTillCollision(item, 'y', 1);
-        this.moveTillCollision(item, 'x', 1);
-      } else if ($options.compactType === CompactType.CompactRightAndDown) {
-        this.moveTillCollision(item, 'x', 1);
-        this.moveTillCollision(item, 'y', 1);
-      } else if ($options.compactType === CompactType.CompactGrid) {
-        this.moveToGridPosition(item);
-      }
+    const compactType = this.gridster.$options().compactType;
+    if (compactType === CompactType.CompactGrid) {
+      this.moveToGridPosition(item);
+      return;
+    }
+    for (const [direction, delta] of COMPACT_MOVEMENTS[compactType] ?? []) {
+      this.moveTillCollision(item, direction, delta);
     }
   }
 

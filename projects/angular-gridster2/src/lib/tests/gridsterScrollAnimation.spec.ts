@@ -15,7 +15,8 @@ describe('gridsterScroll animation frames', () => {
       offsetWidth: { configurable: true, value: 500 },
       offsetHeight: { configurable: true, value: 300 },
       scrollTop: { configurable: true, writable: true, value: 0 },
-      scrollLeft: { configurable: true, writable: true, value: 0 }
+      scrollLeft: { configurable: true, writable: true, value: 0 },
+      getBoundingClientRect: { configurable: true, value: () => ({ top: 0, left: 0, bottom: 300, right: 500 }) }
     });
     const gridster = {
       el,
@@ -24,6 +25,7 @@ describe('gridsterScroll animation frames', () => {
       $options: () => ({
         scrollSensitivity: 10,
         scrollSpeed: 20,
+        scale: 1,
         maxRows: 100,
         maxCols: 100,
         margin: 10,
@@ -33,8 +35,8 @@ describe('gridsterScroll animation frames', () => {
       })
     };
 
-    // the bottom edge of the dragged item is 5px away from the bottom of the grid
-    scroll(gridster as never, 0, 250, 100, 45, new MouseEvent('mousemove', { clientX: 50, clientY: 295 }), { clientX: 50, clientY: 290 }, vi.fn());
+    // the pointer is 5px away from the bottom edge of the grid
+    scroll(gridster as never, new MouseEvent('mousemove', { clientX: 50, clientY: 295 }), { clientX: 50, clientY: 290 }, vi.fn());
 
     expect(requestFrame).toHaveBeenCalledOnce();
   });

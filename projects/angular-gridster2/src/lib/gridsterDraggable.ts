@@ -93,6 +93,8 @@ export class GridsterDraggable {
     e.stopPropagation();
     e.preventDefault();
 
+    this.resetLastMouse(e);
+
     this.zone.runOutsideAngular(() => {
       this.mousemove = this.gridsterItem.renderer.listen('document', 'mousemove', this.dragMove);
       this.touchmove = this.gridster.renderer.listen(this.gridster.el, 'touchmove', this.dragMove);
@@ -252,6 +254,7 @@ export class GridsterDraggable {
     this.gridster.dragInProgress = false;
     this.gridster.updateGrid();
     this.path = [];
+    this.resetLastMouse();
     const options = this.gridster.options();
     if (options.draggable && options.draggable.stop) {
       Promise.resolve(options.draggable.stop(this.gridsterItem.item(), this.gridsterItem, e)).then(this.makeDrag, this.cancelDrag);
@@ -490,5 +493,10 @@ export class GridsterDraggable {
       directions.push(Direction.LEFT);
     }
     return directions;
+  }
+
+  private resetLastMouse(e?: MouseEvent): void {
+    this.lastMouse.clientX = e?.clientX ?? 0;
+    this.lastMouse.clientY = e?.clientY ?? 0;
   }
 }

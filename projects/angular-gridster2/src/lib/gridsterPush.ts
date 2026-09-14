@@ -1,6 +1,18 @@
 import { Gridster } from './gridster';
 import { GridsterItem } from './gridsterItem';
 
+// order of the conflicts for each push direction, matching the first two directions of tryPattern
+const PUSH_ORDER: Record<string, (a: GridsterItem, b: GridsterItem) => number> = {
+  // pushed south, then east
+  fromNorth: (a, b) => b.$item().y - a.$item().y || b.$item().x - a.$item().x,
+  // pushed north, then east
+  fromSouth: (a, b) => a.$item().y - b.$item().y || b.$item().x - a.$item().x,
+  // pushed east, then south
+  fromWest: (a, b) => b.$item().x - a.$item().x || b.$item().y - a.$item().y,
+  // pushed west, then south
+  fromEast: (a, b) => a.$item().x - b.$item().x || b.$item().y - a.$item().y
+};
+
 export class GridsterPush {
   public fromSouth = 'fromSouth';
   public fromNorth = 'fromNorth';
@@ -108,16 +120,9 @@ export class GridsterPush {
       return false;
     }
     const conflicts: GridsterItem[] = this.gridster.findItemsWithItem(gridsterItem.$item());
-    const invert = direction === this.fromNorth || direction === this.fromWest;
-    // sort the list of conflicts in order of [y,x]. Invert when the push is from north and west
-    // this is done so they don't conflict witch each other and revert positions, keeping the previous order
-    conflicts.sort((a, b) => {
-      if (invert) {
-        return b.$item().y - a.$item().y || b.$item().x - a.$item().x;
-      } else {
-        return a.$item().y - b.$item().y || a.$item().x - b.$item().x;
-      }
-    });
+    // move first the conflicts farthest along the first direction tried, then along its fallback:
+    // each item is out of the way before the next one lands there, so they keep their order (upstream #818)
+    conflicts.sort(PUSH_ORDER[direction]);
     let i = 0;
     let itemCollision: GridsterItem;
     let makePush = true;

@@ -42,4 +42,4 @@ options: GridsterConfig = {
 
 The outer margins are applied as padding on `<gridster>`. The overrides only apply when `outerMargin` is `true`.
 
-> **Known issue:** in scrolling grids the bottom (and right) outer margin may not be visible after the last row. It is tracked from upstream #696 and #721.
+In scrolling grids the bottom and right outer margins stay visible after scrolling to the last row or column: an invisible element, `.gridster-scroll-spacer`, makes them part of the scrollable area (browsers ignore the margins of absolutely positioned items there).

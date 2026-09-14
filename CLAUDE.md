@@ -49,7 +49,7 @@ Gridster (gridster.ts)            <gridster> container component
  ├─ layout                        setGridSize → setGridDimensions → calculateLayout → updateGrid
  ├─ collisions                    checkCollision / checkGridCollision / findItemWithItem(s)
  ├─ auto placement                getNextPossiblePosition / autoPositionItem
- ├─ GridsterRenderer              px styles for items, preview, grid lines (transform or top/left, RTL, mobile)
+ ├─ GridsterRenderer              px styles for items, preview, grid lines, scroll spacer (transform or top/left, RTL, mobile)
  ├─ GridsterCompact               compaction (up/left/right/down/combinations/grid)
  ├─ GridsterEmptyCell             click / contextmenu / HTML5 drop / drag-to-create / hover preview on empty cells
  └─ GridsterPreview               <gridster-preview>, shadow of the target position

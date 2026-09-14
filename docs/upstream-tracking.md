@@ -59,7 +59,20 @@ Fixed on 2026-09-14, one commit per bug, each with a spec that fails on the prev
 | `gridsterEmptyCell.emptyCellMouseDown`     | `instanceof TouchEvent` threw where `TouchEvent` is undefined                                               |
 | `gridsterItem.bringToFront/sendToBack`     | `zIndex` did not update until the next drag or resize                                                       |
 
-Still open: `gridster.checkIfMobile` reads the global `document` when `useBodyForBreakpoint` is set, which fails during server-side rendering with that option.
+Still open:
+
+- `gridster.checkIfMobile` reads the global `document` when `useBodyForBreakpoint` is set, which fails during server-side rendering with that option.
+- Changing `useTransformPositioning` at runtime leaves the previous positioning styles on the items (`setCellPosition` never clears `transform` or `top`/`left`), so they end up offset twice.
+
+## Upstream issues fixed
+
+Bugs from [issue-triage.md](issue-triage.md) reproduced in the demo, each fixed with a spec that fails on the previous code.
+
+| Issues                        | Problem                                                                                                                | Fix                                                                                                                                                                                                                                                                                        |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| #696 #721 #547 #515 #491 #739 | Bottom and right outer margins missing after scrolling (`scrollVertical`, `verticalFixed`, `fixed`, `horizontalFixed`) | Browsers leave the margins of absolutely positioned items and the end padding of the grid out of the scrollable area. An invisible `.gridster-scroll-spacer`, as big as the rows and columns plus the outer margins, now sets it; the item margins were removed. Measured in Chromium only |
+
+Checked and not a bug: #505 (the extra space comes from decimal `rows`/`y` values).
 
 ## Upstream issues already fixed in code but still open
 

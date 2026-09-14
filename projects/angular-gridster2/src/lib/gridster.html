@@ -4,6 +4,7 @@
 @for (_ of gridRows; track i; let i = $index) {
   <div class="gridster-row" [ngStyle]="gridRenderer.getGridRowStyle(i)"></div>
 }
+<div class="gridster-scroll-spacer" [ngStyle]="gridRenderer.getScrollSpacerStyle()"></div>
 <ng-content />
 
 <gridster-preview class="gridster-preview" />

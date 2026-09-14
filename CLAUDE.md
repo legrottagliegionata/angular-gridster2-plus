@@ -37,8 +37,9 @@ Do not commit incidental `package-lock.json` changes produced by `npm install`.
 - `projects/angular-gridster2/src/lib/` – the library (public surface in `src/public_api.ts`); the folder, the Angular project and `dist/angular-gridster2` keep the upstream name, the npm package is `angular-gridster2-plus`
 - `projects/angular-gridster2/src/lib/tests/` – specs
 - `projects/angular-gridster2/README.md` and `LICENSE` are symlinks to the root files: edit the root ones
-- `src/app/sections/*` – demo pages, one per feature; `src/assets/*.md` – their docs. The demo imports `angular-gridster2-plus`, mapped by the `tsconfig.json` path alias to `dist/angular-gridster2` or the library sources
-- `.github/workflows/` – `ci.yml` (pull requests and `master`), `deploy-demo.yml` (`master`, manual), `publish.yml` (`v*` tags)
+- `src/app/sections/*` – demo pages, one per feature. They only show examples and link to the matching wiki page (Docs button). The demo imports `angular-gridster2-plus`, mapped by the `tsconfig.json` path alias to `dist/angular-gridster2` or the library sources
+- `wiki/` – source of the GitHub wiki (the user documentation). Update it in the same PR as any behaviour or option change; `wiki.yml` publishes it on merge. Internal links are `[Text](Page-Name#anchor)`
+- `.github/workflows/` – `ci.yml` (pull requests and `master`), `deploy-demo.yml` (`master`, manual), `wiki.yml` (`wiki/` changes on `master`, manual), `publish.yml` (`v*` tags)
 
 ## Architecture
 

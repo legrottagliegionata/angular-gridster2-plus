@@ -5,7 +5,7 @@
 [![downloads](https://img.shields.io/npm/dm/angular-gridster2-plus.svg)](https://www.npmjs.com/package/angular-gridster2-plus)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/gionatalegrottaglie)
 
-### Angular implementation of angular-gridster [Demo](https://legrottagliegionata.github.io/angular-gridster2-plus)
+### Angular implementation of angular-gridster [Demo](https://legrottagliegionata.github.io/angular-gridster2-plus) · [Documentation](https://github.com/legrottagliegionata/angular-gridster2-plus/wiki)
 
 Community-maintained fork of [angular-gridster2](https://github.com/tiberiuzuld/angular-gridster2) by [Tiberiu Zuld](https://github.com/tiberiuzuld), which is no longer actively developed. It keeps the same API and integrates the fixes contributed by the community.
 

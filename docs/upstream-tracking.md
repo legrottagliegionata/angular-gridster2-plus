@@ -75,4 +75,4 @@ Still open: `gridster.checkIfMobile` reads the global `document` when `useBodyFo
 
 ## Issue triage
 
-Not started. Snapshot 2026-09-13: 324 open issues; labels: 42 question, 23 enhancement, 16 bug; 59% opened in 2018–2020.
+See [issue-triage.md](issue-triage.md): the 324 open upstream issues (snapshot 2026-09-14) classified as fixed, probable bugs to reproduce, feature requests, questions for a FAQ and issues that can be closed.

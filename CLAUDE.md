@@ -9,7 +9,7 @@ Community fork of [tiberiuzuld/angular-gridster2](https://github.com/tiberiuzuld
 - Upstream PR heads are fetched as `refs/upstream-pr/<number>` (`git fetch upstream pull/<n>/head:refs/upstream-pr/<n>`)
 - Issues are enabled on the fork; upstream issues/PRs are read with `gh ... -R tiberiuzuld/angular-gridster2`
 - The repository is a GitHub fork: always pass `-R legrottagliegionata/angular-gridster2-plus` to `gh pr create`, otherwise gh may target upstream
-- Status of upstream PRs, known bugs and issue triage: [docs/upstream-tracking.md](docs/upstream-tracking.md)
+- Status of upstream PRs and known bugs: [docs/upstream-tracking.md](docs/upstream-tracking.md); triage of the open upstream issues: [docs/issue-triage.md](docs/issue-triage.md)
 
 ## Commands
 

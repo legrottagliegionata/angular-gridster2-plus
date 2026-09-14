@@ -4,21 +4,22 @@ The components use `ViewEncapsulation.None`: override their styles from your glo
 
 ## Elements and classes
 
-| Selector                                                                                   | Element                                                                                              |
-| ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| `gridster`                                                                                 | The grid. Defaults: `background: grey`, `width` and `height` 100%                                    |
-| `gridster.fit`, `gridster.scrollVertical`, `gridster.scrollHorizontal`, `gridster.fixed`   | Current grid type (`verticalFixed` uses `scrollVertical`, `horizontalFixed` uses `scrollHorizontal`) |
-| `gridster.mobile`                                                                          | Mobile layout                                                                                        |
-| `gridster.gridSize`                                                                        | `setGridSize` is on                                                                                  |
-| `gridster.display-grid`                                                                    | The grid lines are visible                                                                           |
-| `gridster .gridster-column`, `gridster .gridster-row`                                      | Grid lines                                                                                           |
-| `gridster-item`                                                                            | An item. Defaults: `background: white`, `transition: .3s`                                            |
-| `gridster-item.gridster-item-moving`                                                       | Item being dragged                                                                                   |
-| `gridster-item.gridster-item-resizing`                                                     | Item being resized                                                                                   |
-| `gridster-preview`                                                                         | Shadow of the target position during drags, drops and hover                                          |
-| `.gridster-item-resizable-handler.handle-n` (`-e`, `-s`, `-w`, `-ne`, `-nw`, `-se`, `-sw`) | Resize handles                                                                                       |
-| `.gridster-item-content`                                                                   | Content that does not start a drag (default `draggable.ignoreContentClass`)                          |
-| `.drag-handler`                                                                            | Drag handles with `ignoreContent: true` (default `draggable.dragHandleClass`)                        |
+| Selector                                                                                   | Element                                                                                                                           |
+| ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `gridster`                                                                                 | The grid. Defaults: `background: grey`, `width` and `height` 100%                                                                 |
+| `gridster.fit`, `gridster.scrollVertical`, `gridster.scrollHorizontal`, `gridster.fixed`   | Current grid type (`verticalFixed` uses `scrollVertical`, `horizontalFixed` uses `scrollHorizontal`)                              |
+| `gridster.mobile`                                                                          | Mobile layout                                                                                                                     |
+| `gridster.gridSize`                                                                        | `setGridSize` is on                                                                                                               |
+| `gridster.display-grid`                                                                    | The grid lines are visible                                                                                                        |
+| `gridster .gridster-column`, `gridster .gridster-row`                                      | Grid lines                                                                                                                        |
+| `gridster .gridster-scroll-spacer`                                                         | Invisible element as big as the rows and columns plus the outer margins: it sets the scrollable area. Hidden in the mobile layout |
+| `gridster-item`                                                                            | An item. Defaults: `background: white`, `transition: .3s`                                                                         |
+| `gridster-item.gridster-item-moving`                                                       | Item being dragged                                                                                                                |
+| `gridster-item.gridster-item-resizing`                                                     | Item being resized                                                                                                                |
+| `gridster-preview`                                                                         | Shadow of the target position during drags, drops and hover                                                                       |
+| `.gridster-item-resizable-handler.handle-n` (`-e`, `-s`, `-w`, `-ne`, `-nw`, `-se`, `-sw`) | Resize handles                                                                                                                    |
+| `.gridster-item-content`                                                                   | Content that does not start a drag (default `draggable.ignoreContentClass`)                                                       |
+| `.drag-handler`                                                                            | Drag handles with `ignoreContent: true` (default `draggable.dragHandleClass`)                                                     |
 
 ## Example theme
 

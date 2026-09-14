@@ -3,7 +3,7 @@ import { Renderer2 } from '@angular/core';
 import { Gridster } from './gridster';
 import { DirTypes, GridType } from './gridsterConfig';
 import { GridsterItemConfig } from './gridsterItemConfig';
-import { CommonGridStyle, GridColumnCachedStyle, GridRowCachedStyle } from './gridsterRendererTypes';
+import { CommonGridCachedStyle, CommonGridStyle, GridColumnCachedStyle, GridRowCachedStyle } from './gridsterRendererTypes';
 
 export class GridsterRenderer {
   /**
@@ -17,6 +17,11 @@ export class GridsterRenderer {
    * This improves the grid responsiveness by caching and reusing the last style object instead of creating a new one.
    */
   private lastGridRowStyles: Record<number, GridRowCachedStyle> = {};
+
+  /**
+   * Caches the last scroll spacer style, like the grid line styles.
+   */
+  private lastScrollSpacerStyle: (CommonGridCachedStyle & { rtl: boolean }) | null = null;
 
   constructor(private gridster: Gridster) {}
 
@@ -37,7 +42,6 @@ export class GridsterRenderer {
 
       renderer.setStyle(el, 'order', item.y * this.gridster.columns + item.x);
       renderer.setStyle(el, 'margin-bottom', $options.margin + 'px');
-      renderer.setStyle(el, $options.dirType === DirTypes.LTR ? 'margin-right' : 'margin-left', '');
     } else {
       const x = Math.round(this.gridster.curColWidth * item.x);
       const y = Math.round(this.gridster.curRowHeight * item.y);
@@ -47,28 +51,9 @@ export class GridsterRenderer {
       this.setCellPosition(renderer, el, x, y);
       renderer.setStyle(el, 'width', width + 'px');
       renderer.setStyle(el, 'height', height + 'px');
-      let marginBottom: string | null = null;
-      let marginRight: string | null = null;
-      if ($options.outerMargin) {
-        if (this.gridster.rows === item.rows + item.y) {
-          if ($options.outerMarginBottom !== null) {
-            marginBottom = $options.outerMarginBottom + 'px';
-          } else {
-            marginBottom = $options.margin + 'px';
-          }
-        }
-        if (this.gridster.columns === item.cols + item.x) {
-          if ($options.outerMarginRight !== null) {
-            marginRight = $options.outerMarginRight + 'px';
-          } else {
-            marginRight = $options.margin + 'px';
-          }
-        }
-      }
-
+      // the outer margins come from the scroll spacer: browsers ignore the margins of absolutely positioned items when scrolling
       renderer.setStyle(el, 'order', null);
-      renderer.setStyle(el, 'margin-bottom', marginBottom);
-      renderer.setStyle(el, $options.dirType === DirTypes.LTR ? 'margin-right' : 'margin-left', marginRight);
+      renderer.setStyle(el, 'margin-bottom', null);
     }
   }
 
@@ -182,6 +167,29 @@ export class GridsterRenderer {
     return newPos.style;
   }
 
+  /**
+   * Style of the invisible element that gives the grid its scrollable size: the rows and columns plus the outer margins.
+   * Browsers leave the margins of absolutely positioned items and the end padding of the grid out of the scrollable area,
+   * so without it the bottom and right outer margins of scrolling grids cannot be reached (upstream #696, #721, #547).
+   */
+  getScrollSpacerStyle(): CommonGridStyle {
+    const $options = this.gridster.$options();
+    const rtl = $options.dirType === DirTypes.RTL;
+    const width = Math.max(0, this.getLeftMargin() + this.gridster.columns * this.gridster.curColWidth - $options.margin + this.getRightMargin());
+    const height = Math.max(0, this.getTopMargin() + this.gridster.rows * this.gridster.curRowHeight - $options.margin + this.getBottomMargin());
+
+    // use the last cached style if it has same values as the generated one
+    const last = this.lastScrollSpacerStyle;
+    if (last && last.width === width && last.height === height && last.rtl === rtl) {
+      return last.style;
+    }
+
+    // cache and set new style, anchored to the edge the items start from
+    const style: CommonGridStyle = { [rtl ? 'right' : 'left']: '0', width: width + 'px', height: height + 'px' };
+    this.lastScrollSpacerStyle = { width, height, rtl, style };
+    return style;
+  }
+
   getLeftPosition(d: number): { left: string } | { transform: string } {
     const $options = this.gridster.$options();
     const dPosition = $options.dirType === DirTypes.RTL ? -d : d;
@@ -242,11 +250,37 @@ export class GridsterRenderer {
     }
   }
 
+  getRightMargin(): number {
+    const $options = this.gridster.$options();
+    if ($options.outerMargin) {
+      if ($options.outerMarginRight !== null) {
+        return $options.outerMarginRight;
+      } else {
+        return $options.margin;
+      }
+    } else {
+      return 0;
+    }
+  }
+
   getTopMargin(): number {
     const $options = this.gridster.$options();
     if ($options.outerMargin) {
       if ($options.outerMarginTop !== null) {
         return $options.outerMarginTop;
+      } else {
+        return $options.margin;
+      }
+    } else {
+      return 0;
+    }
+  }
+
+  getBottomMargin(): number {
+    const $options = this.gridster.$options();
+    if ($options.outerMargin) {
+      if ($options.outerMarginBottom !== null) {
+        return $options.outerMarginBottom;
       } else {
         return $options.margin;
       }

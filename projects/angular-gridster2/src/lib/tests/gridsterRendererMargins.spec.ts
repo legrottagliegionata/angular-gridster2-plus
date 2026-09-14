@@ -36,24 +36,36 @@ function renderLastCell(gridster: Gridster) {
 }
 
 describe('GridsterRenderer outer margins', () => {
-  it('uses outerMarginRight for items in the last column', () => {
-    const { el, setStyle } = renderLastCell(createGridster({ outerMarginRight: 30 }));
+  it('sizes the scroll spacer with the outer margins', () => {
+    const style = new GridsterRenderer(createGridster({ outerMarginRight: 30, outerMarginBottom: 50 })).getScrollSpacerStyle();
 
-    expect(setStyle).toHaveBeenCalledWith(el, 'margin-right', '30px');
+    // 2 cells of 100px minus the trailing gap, plus the outer margins (margin when not overridden)
+    expect(style).toEqual({ left: '0', width: '230px', height: '250px' });
+  });
+
+  it('leaves the outer margins out of the scroll spacer when outerMargin is false', () => {
+    const style = new GridsterRenderer(createGridster({ outerMargin: false, outerMarginBottom: 50 })).getScrollSpacerStyle();
+
+    expect(style).toEqual({ left: '0', width: '190px', height: '190px' });
+  });
+
+  it('anchors the scroll spacer to the right edge in RTL', () => {
+    const style = new GridsterRenderer(createGridster({ dirType: DirTypes.RTL })).getScrollSpacerStyle();
+
+    expect(style).toEqual({ right: '0', width: '210px', height: '210px' });
+  });
+
+  it('does not put the outer margins on the items of the last row and column', () => {
+    const { el, setStyle } = renderLastCell(createGridster({ outerMarginRight: 30, outerMarginBottom: 50 }));
+
+    expect(setStyle).toHaveBeenCalledWith(el, 'margin-bottom', null);
+    expect(setStyle).not.toHaveBeenCalledWith(el, 'margin-right', expect.anything());
+    expect(setStyle).not.toHaveBeenCalledWith(el, 'margin-left', expect.anything());
+  });
+
+  it('keeps the bottom margin of items in the mobile layout', () => {
+    const { el, setStyle } = renderLastCell(createGridster({}, true));
+
     expect(setStyle).toHaveBeenCalledWith(el, 'margin-bottom', '10px');
-  });
-
-  it('falls back to margin on the right when only outerMarginBottom is set', () => {
-    const { el, setStyle } = renderLastCell(createGridster({ outerMarginBottom: 5 }));
-
-    expect(setStyle).toHaveBeenCalledWith(el, 'margin-right', '10px');
-    expect(setStyle).toHaveBeenCalledWith(el, 'margin-bottom', '5px');
-  });
-
-  it('clears the inline-end margin of RTL items in the mobile layout', () => {
-    const { el, setStyle } = renderLastCell(createGridster({ dirType: DirTypes.RTL }, true));
-
-    expect(setStyle).toHaveBeenCalledWith(el, 'margin-left', '');
-    expect(setStyle).not.toHaveBeenCalledWith(el, 'margin-right', '');
   });
 });

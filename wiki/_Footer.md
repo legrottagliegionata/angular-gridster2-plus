@@ -1,0 +1,1 @@
+MIT License. Originally created by [Tiberiu Zuld](https://github.com/tiberiuzuld) as [angular-gridster2](https://github.com/tiberiuzuld/angular-gridster2). These pages are generated from the [`wiki/` folder](https://github.com/legrottagliegionata/angular-gridster2-plus/tree/master/wiki) of the repository: propose changes with a pull request.

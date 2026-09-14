@@ -3,14 +3,13 @@ import { MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 import { CompactType, DisplayGrid, Gridster, GridsterConfig, GridsterItem, GridsterItemConfig, GridType } from 'angular-gridster2-plus';
-import { MarkdownComponent } from 'ngx-markdown';
 import { TrackByItem } from './track-by-item';
 
 @Component({
   selector: 'app-track-by',
   templateUrl: './track-by.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [MatButton, MatIcon, MatMiniFabButton, MarkdownComponent, Gridster, GridsterItem, TrackByItem]
+  imports: [MatButton, MatIcon, MatMiniFabButton, Gridster, GridsterItem, TrackByItem]
 })
 export class TrackBy {
   options: GridsterConfig = {

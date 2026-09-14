@@ -5,13 +5,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 
 import { DisplayGrid, Gridster, GridsterConfig, GridsterItem, GridsterItemConfig, GridType } from 'angular-gridster2-plus';
-import { MarkdownComponent } from 'ngx-markdown';
 
 @Component({
   selector: 'app-grid-sizes',
   templateUrl: './grid-sizes.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, MarkdownComponent, Gridster, GridsterItem, MatButton, MatIcon, MatFormField, MatLabel, MatInput, MatMiniFabButton]
+  imports: [FormsModule, Gridster, GridsterItem, MatButton, MatIcon, MatFormField, MatLabel, MatInput, MatMiniFabButton]
 })
 export class GridSizes {
   options: GridsterConfig = {

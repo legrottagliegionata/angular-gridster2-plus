@@ -5,13 +5,12 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
 
 import { DisplayGrid, Gridster, GridsterConfig, GridsterItem, GridsterItemConfig, GridType } from 'angular-gridster2-plus';
-import { MarkdownComponent } from 'ngx-markdown';
 
 @Component({
   selector: 'app-push',
   templateUrl: './push.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, MarkdownComponent, Gridster, GridsterItem, MatButton, MatIcon, MatCheckbox, MatMiniFabButton]
+  imports: [FormsModule, Gridster, GridsterItem, MatButton, MatIcon, MatCheckbox, MatMiniFabButton]
 })
 export class Push {
   options: GridsterConfig = {

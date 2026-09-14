@@ -34,9 +34,6 @@
               "src/styles.scss",
               "src/theme.scss"
             ],
-            "scripts": [
-              "node_modules/marked/lib/marked.umd.js"
-            ],
             "browser": "src/main.ts"
           },
           "configurations": {

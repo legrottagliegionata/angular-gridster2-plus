@@ -5,7 +5,6 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { DisplayGrid, Gridster, GridsterConfig, GridsterItem, GridsterItemConfig, GridType } from 'angular-gridster2-plus';
-import { MarkdownComponent } from 'ngx-markdown';
 
 @Component({
   selector: 'app-swap',
@@ -13,7 +12,6 @@ import { MarkdownComponent } from 'ngx-markdown';
   encapsulation: ViewEncapsulation.None,
   imports: [
     FormsModule,
-    MarkdownComponent,
     Gridster,
     GridsterItem,
     MatButton,

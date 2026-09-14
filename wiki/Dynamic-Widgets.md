@@ -13,13 +13,23 @@ dashboard: WidgetItem[] = [
 ];
 ```
 
+<!-- prettier-ignore -->
 ```html
 <gridster [options]="options">
   @for (item of dashboard; track item.id) {
-  <gridster-item [item]="item">
-    @switch (item.type) { @case ('chart') { <app-chart [config]="item" /> } @case ('table') { <app-table [config]="item" /> } @default {
-    <app-note [config]="item" /> } }
-  </gridster-item>
+    <gridster-item [item]="item">
+      @switch (item.type) {
+        @case ('chart') {
+          <app-chart [config]="item" />
+        }
+        @case ('table') {
+          <app-table [config]="item" />
+        }
+        @default {
+          <app-note [config]="item" />
+        }
+      }
+    </gridster-item>
   }
 </gridster>
 ```

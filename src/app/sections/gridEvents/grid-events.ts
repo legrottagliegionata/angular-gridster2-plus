@@ -3,13 +3,12 @@ import { MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 import { DisplayGrid, Gridster, GridsterApi, GridsterConfig, GridsterItem, GridsterItemConfig, GridType } from 'angular-gridster2-plus';
-import { MarkdownComponent } from 'ngx-markdown';
 
 @Component({
   selector: 'app-grid-events',
   templateUrl: './grid-events.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [MarkdownComponent, Gridster, GridsterItem, MatButton, MatIcon, MatMiniFabButton]
+  imports: [Gridster, GridsterItem, MatButton, MatIcon, MatMiniFabButton]
 })
 export class GridEvents {
   options: GridsterConfig = {

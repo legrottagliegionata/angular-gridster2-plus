@@ -3,14 +3,13 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 import { DisplayGrid, Gridster, GridsterConfig, GridsterItem, GridsterItemConfig, GridType } from 'angular-gridster2-plus';
-import { MarkdownComponent } from 'ngx-markdown';
 import { ParentDynamic } from './parent-dynamic';
 
 @Component({
   selector: 'app-dynamic-widgets',
   templateUrl: './dynamic-widgets.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [MarkdownComponent, Gridster, GridsterItem, ParentDynamic, MatButton, MatIcon]
+  imports: [Gridster, GridsterItem, ParentDynamic, MatButton, MatIcon]
 })
 export class DynamicWidgets implements OnDestroy {
   options: GridsterConfig = {

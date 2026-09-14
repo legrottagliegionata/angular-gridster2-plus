@@ -5,25 +5,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatOption, MatSelect } from '@angular/material/select';
 
 import { DisplayGrid as displayGrid, Gridster, GridsterConfig, GridsterItem, GridsterItemConfig, GridType } from 'angular-gridster2-plus';
-import { MarkdownComponent } from 'ngx-markdown';
 
 @Component({
   selector: 'app-display-grid',
   templateUrl: './display-grid.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [
-    FormsModule,
-    MarkdownComponent,
-    Gridster,
-    GridsterItem,
-    MatButton,
-    MatIcon,
-    MatFormField,
-    MatLabel,
-    MatSelect,
-    MatOption,
-    MatMiniFabButton
-  ]
+  imports: [FormsModule, Gridster, GridsterItem, MatButton, MatIcon, MatFormField, MatLabel, MatSelect, MatOption, MatMiniFabButton]
 })
 export class DisplayGrid {
   options: GridsterConfig = {

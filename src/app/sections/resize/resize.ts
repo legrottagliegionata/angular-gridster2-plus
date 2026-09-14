@@ -6,25 +6,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 
 import { DisplayGrid, Gridster, GridsterConfig, GridsterItem, GridsterItemConfig, GridType } from 'angular-gridster2-plus';
-import { MarkdownComponent } from 'ngx-markdown';
 
 @Component({
   selector: 'app-resize',
   templateUrl: './resize.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [
-    FormsModule,
-    MarkdownComponent,
-    GridsterItem,
-    Gridster,
-    MatIcon,
-    MatButton,
-    MatCheckbox,
-    MatFormField,
-    MatLabel,
-    MatMiniFabButton,
-    MatInput
-  ]
+  imports: [FormsModule, GridsterItem, Gridster, MatIcon, MatButton, MatCheckbox, MatFormField, MatLabel, MatMiniFabButton, MatInput]
 })
 export class Resize {
   options: GridsterConfig = {

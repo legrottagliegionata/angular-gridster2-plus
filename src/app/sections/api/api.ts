@@ -3,13 +3,12 @@ import { MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 import { CompactType, Gridster, GridsterApi, GridsterConfig, GridsterItem, GridsterItemConfig, GridsterPush, GridType } from 'angular-gridster2-plus';
-import { MarkdownComponent } from 'ngx-markdown';
 
 @Component({
   selector: 'app-api',
   templateUrl: './api.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [MarkdownComponent, Gridster, GridsterItem, MatButton, MatIcon, MatMiniFabButton]
+  imports: [Gridster, GridsterItem, MatButton, MatIcon, MatMiniFabButton]
 })
 export class Api {
   options: GridsterConfig = {

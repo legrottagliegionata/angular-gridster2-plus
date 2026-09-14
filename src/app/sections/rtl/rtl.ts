@@ -6,7 +6,6 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { CompactType, DirTypes, DisplayGrid, Gridster, GridsterConfig, GridsterItem, GridsterItemConfig, GridType } from 'angular-gridster2-plus';
-import { MarkdownComponent } from 'ngx-markdown';
 
 @Component({
   selector: 'app-rtl',
@@ -14,7 +13,6 @@ import { MarkdownComponent } from 'ngx-markdown';
   encapsulation: ViewEncapsulation.None,
   imports: [
     FormsModule,
-    MarkdownComponent,
     Gridster,
     GridsterItem,
     MatButton,

@@ -58,6 +58,7 @@ export class Dashboard {
 }
 ```
 
+<!-- prettier-ignore -->
 ```html
 <!-- dashboard.html -->
 <button (click)="addItem()">Add</button>
@@ -65,9 +66,9 @@ export class Dashboard {
 
 <gridster [options]="options">
   @for (item of dashboard; track item.id) {
-  <gridster-item [item]="item">
-    <button class="gridster-item-content" (click)="removeItem(item)">Remove</button>
-  </gridster-item>
+    <gridster-item [item]="item">
+      <button class="gridster-item-content" (click)="removeItem(item)">Remove</button>
+    </gridster-item>
   }
 </gridster>
 ```

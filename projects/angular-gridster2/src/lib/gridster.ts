@@ -562,9 +562,11 @@ export class Gridster implements OnInit, OnDestroy {
     ) {
       return true;
     }
-    for (let y = startingFrom.y || 0; y < this.rows; y++) {
+    const firstRow = startingFrom.y || 0;
+    for (let y = firstRow; y < this.rows; y++) {
       newItem.y = y;
-      for (let x = startingFrom.x || 0; x < this.columns; x++) {
+      // only the first row starts at startingFrom.x, the next ones from the first column (upstream #875)
+      for (let x = y === firstRow ? startingFrom.x || 0 : 0; x < this.columns; x++) {
         newItem.x = x;
         if (!this.checkCollision(newItem, false, existingItemComponent)) {
           return true;

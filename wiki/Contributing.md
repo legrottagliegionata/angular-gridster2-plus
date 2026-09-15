@@ -35,6 +35,12 @@ npm ci --legacy-peer-deps
 - Behaviour or option changes update the wiki pages in `wiki/` in the same pull request. The `Publish Wiki` workflow publishes them when the pull request is merged.
 - The `CI` workflow runs the tests and builds the library and the demo on every pull request.
 
+## Releases
+
+Version numbers follow the Angular major the library supports: `22.x` for Angular 22.
+
+A release is a pull request that bumps `version` in `package.json` and `projects/angular-gridster2/package.json`, followed by a `v<version>` tag on `master`. The `Publish Package` workflow then checks the tag against the package version, runs the tests, builds the library and publishes it to npm.
+
 ## How the library works
 
 The architecture, the main concepts (the item working copy, how options are merged, the drag and resize lifecycle) and testing notes are described in [CLAUDE.md](https://github.com/legrottagliegionata/angular-gridster2-plus/blob/master/CLAUDE.md).

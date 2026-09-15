@@ -70,6 +70,10 @@ Yes. The library works in zoneless applications and in applications that use zon
 
 Dispatch `mousedown` on the item, then `mousemove` and `mouseup` on `document` with `clientX`/`clientY` coordinates; for external drops dispatch `dragover` and `drop` on `<gridster>`.
 
+## Text inside items is blurry
+
+With `useTransformPositioning: true` (the default) items are placed with `transform: translate3d()`. Depending on the screen scaling and on where the grid is on the page, browsers can draw that layer at fractional pixels and the text looks blurry (upstream #616). Set `useTransformPositioning: false` to place items with `top`/`left` instead; see [Styling](Styling#positioning).
+
 ## The grid is inside a CSS-scaled container and drags are offset
 
 Set the `scale` option to the scale factor of the container. See [Responsive and Mobile](Responsive-and-Mobile#browser-zoom-and-css-scale).

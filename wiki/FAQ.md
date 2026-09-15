@@ -28,7 +28,7 @@ Items have `overflow: hidden`, and with `useTransformPositioning` they are also 
 
 ## The grid is wrong inside tabs, accordions or hidden containers
 
-The grid follows the size of its container, so it updates when the tab becomes visible. With `disableWindowResize: true`, call `api.resize()` when the container is shown. See [Responsive and Mobile](Responsive-and-Mobile#window-and-container-resize).
+The grid follows the size of its container, so it updates when the tab becomes visible. A grid created inside a hidden panel measures 0 and its items come out wrong, and it lays itself out correctly as soon as the panel is shown. With `disableWindowResize: true` the grid is not watched: call `api.resize()` when the container is shown. See [Responsive and Mobile](Responsive-and-Mobile#window-and-container-resize).
 
 ## Clicking a button inside an item starts a drag
 
@@ -81,3 +81,9 @@ Set the `scale` option to the scale factor of the container. See [Responsive and
 ## Can I nest grids?
 
 Yes, a grid can be placed inside an item of another grid; the inner grid follows the size of its item.
+
+`curColWidth` and `curRowHeight` are still `0` in `initCallback`, which runs before the first layout. Read them in `itemInitCallback`, in the item `initCallback` or in `gridSizeChangedCallback`, which run once the grid and its items have a size (upstream #624, #598).
+
+## Can two grids share the same items?
+
+No. The grid writes `x`, `y`, `cols` and `rows` into the item objects you pass it, so two grids over the same array, for example the same component shown in two tabs, overwrite each other's positions. Give each grid its own copy, such as `items.map(item => ({ ...item }))` (upstream #557).

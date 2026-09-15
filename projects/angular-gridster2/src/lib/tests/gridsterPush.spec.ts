@@ -26,8 +26,8 @@ function collides(item: GridsterItemConfig, item2: GridsterItemConfig): boolean 
   return item.x < item2.x + item2.cols && item.x + item.cols > item2.x && item.y < item2.y + item2.rows && item.y + item.rows > item2.y;
 }
 
-function makeItem(x: number, y: number): MockGridsterItem {
-  const source = { x, y, cols: 1, rows: 1 };
+function makeItem(x: number, y: number, cols = 1, rows = 1): MockGridsterItem {
+  const source = { x, y, cols, rows };
   const state = { ...source };
   return {
     $item: () => state,
@@ -49,6 +49,7 @@ function attachGridster(items: MockGridsterItem[], pushDirections: PushDirection
 }
 
 const verticalOnly: PushDirections = { north: true, east: false, south: true, west: false };
+const allDirections: PushDirections = { north: true, east: true, south: true, west: true };
 
 describe('gridsterPush service', () => {
   // upstream #941: dragging the 4th stacked item onto the 3rd swapped the 1st and 2nd items
@@ -100,5 +101,32 @@ describe('gridsterPush service', () => {
         { x: 0, y: 2 }
       ]
     ]);
+  });
+
+  // upstream #818: dragging or resizing an item from the east into a column pushed the column south in reverse order
+  it('keeps the order of a column pushed south by an item coming from the east', () => {
+    const top = makeItem(0, 0);
+    const bottom = makeItem(0, 1);
+    const draggedItem = makeItem(1, 0, 1, 2);
+    attachGridster([top, bottom, draggedItem], allDirections, 4, 10);
+    draggedItem.$item().x = 0;
+
+    const push = new GridsterPush(draggedItem as unknown as GridsterItem);
+
+    expect(push.pushItems(push.fromEast)).toBe(true);
+    expect([top.$item().y, bottom.$item().y]).toEqual([2, 3]);
+  });
+
+  it('keeps the order of a row pushed east by an item coming from the south', () => {
+    const left = makeItem(0, 0);
+    const right = makeItem(1, 0);
+    const draggedItem = makeItem(0, 1, 2, 1);
+    attachGridster([left, right, draggedItem], allDirections, 4, 2);
+    draggedItem.$item().y = 0;
+
+    const push = new GridsterPush(draggedItem as unknown as GridsterItem);
+
+    expect(push.pushItems(push.fromSouth)).toBe(true);
+    expect([left.$item().x, right.$item().x]).toEqual([2, 3]);
   });
 });

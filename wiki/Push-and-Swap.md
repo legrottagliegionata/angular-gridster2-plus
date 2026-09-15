@@ -26,6 +26,7 @@ options: GridsterConfig = {
 - Only draggable items can be pushed; only resizable items can be shrunk by `pushResizeItems`. An item with `dragEnabled: false` blocks the push.
 - A pushed item first moves in the direction of the push, then tries the perpendicular directions allowed by `pushDirections`. If no item can make room, the move is refused.
 - Pushed items go back to their original position when the dragged item moves away again.
+- Pushed items keep their order, also when they move in a fallback direction: a column pushed down by an item dragged in from the side stays in the same order.
 - Every pushed item emits `itemChange` when the drag or resize ends.
 
 ## Swap
@@ -36,6 +37,8 @@ options: GridsterConfig = {
 | `swapWhileDragging` | `false` | Swap as soon as the dragged item overlaps another one, and keep the new positions |
 
 Swap works best with items of the same size: when one of them does not fit in the position of the other, nothing happens.
+
+Without `swapWhileDragging`, the swapped item goes back to its place when the dragged item moves on. While it cannot go back (the dragged item covers its place), the dragged item does not swap with other items.
 
 ## From code
 

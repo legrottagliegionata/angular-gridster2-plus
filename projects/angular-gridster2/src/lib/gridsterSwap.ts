@@ -16,7 +16,10 @@ export class GridsterSwap {
   swapItems(): void {
     if (this.gridster.$options().swap) {
       this.checkSwapBack();
-      this.checkSwap(this.gridsterItem);
+      // only one swapped item is tracked: while it cannot go back, another swap would leave it out of the layout (upstream #484, #514)
+      if (!this.swapedItem) {
+        this.checkSwap(this.gridsterItem);
+      }
     }
   }
 

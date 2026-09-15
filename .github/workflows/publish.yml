@@ -24,7 +24,32 @@ jobs:
       - name: Update npm
         run: npm install -g npm@latest
       - run: npm ci --legacy-peer-deps
-      - run: npm run build-lib
+
+      - name: Check the tag against the package version
+        run: |
+          version=$(node -p "require('./projects/angular-gridster2/package.json').version")
+          tag="${GITHUB_REF_NAME#v}"
+          if [ "$version" != "$tag" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match the package version $version"
+            exit 1
+          fi
+
+      - name: Check whether the version is already on npm
+        id: registry
+        run: |
+          version=$(node -p "require('./projects/angular-gridster2/package.json').version")
+          if npm view "angular-gridster2-plus@$version" version > /dev/null 2>&1; then
+            echo "angular-gridster2-plus@$version is already published, nothing to do"
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.registry.outputs.published == 'false'
+        run: npm run test-lib -- --watch=false
+      - if: steps.registry.outputs.published == 'false'
+        run: npm run build-lib
       - name: Publish package
+        if: steps.registry.outputs.published == 'false'
         working-directory: ./dist/angular-gridster2
         run: npm publish

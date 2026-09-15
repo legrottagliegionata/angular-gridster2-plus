@@ -24,6 +24,16 @@ npm start                                 # demo app (src/app) on localhost:4200
 
 Do not commit incidental `package-lock.json` changes produced by `npm install`.
 
+## Release
+
+What reaches npm is `dist/angular-gridster2`, built from `projects/angular-gridster2`.
+
+1. In a pull request, bump `version` to the same number in `package.json` and `projects/angular-gridster2/package.json`, and sync the lockfile with `npm install --package-lock-only --legacy-peer-deps`.
+2. After the merge, tag `master`: `git tag v<version> && git push origin v<version>`. Never `git push --tags`: the clone carries 272 tags inherited from upstream and none of them belong to this fork (its remote has no tags).
+3. `publish.yml` checks the tag against the package version, runs the library tests, builds the library and publishes it with npm trusted publishing (OIDC, no token in the repository).
+
+Version numbers follow the Angular major (`22.x` for Angular 22). The first release, 22.1.0, is published by hand: npm only lets you configure a trusted publisher for a package that already exists.
+
 ## Conventions
 
 - Conventional commits, enforced by commitlint in the husky `commit-msg` hook; `pre-commit` runs prettier via lint-staged.

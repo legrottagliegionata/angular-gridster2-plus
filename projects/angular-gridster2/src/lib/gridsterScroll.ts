@@ -149,8 +149,15 @@ function startVerticalScroll(sign: number, calculateItemPosition: CalculatePosit
       top = maxScrollY - gridsterElement.scrollTop;
     }
 
+    // follow the distance the grid really scrolled: a grid that cannot scroll (setGridSize) moved the item forever (upstream #919)
+    const scrollTop = gridsterElement.scrollTop;
     gridsterElement.scrollTop += top;
-    lastMouseY += top;
+    const scrolled = gridsterElement.scrollTop - scrollTop;
+    if (top && !scrolled) {
+      cancelVerticalScroll();
+      return;
+    }
+    lastMouseY += scrolled;
     calculateItemPosition({ clientX: lastMouseX, clientY: lastMouseY });
 
     if ((scrollN && gridsterElement.scrollTop <= 0) || (scrollS && gridsterElement.scrollTop >= maxScrollY)) {
@@ -198,8 +205,15 @@ function startHorizontalScroll(sign: number, calculateItemPosition: CalculatePos
       return;
     }
 
+    // follow the distance the grid really scrolled (upstream #919)
+    const scrollLeft = gridsterElement.scrollLeft;
     gridsterElement.scrollLeft += left;
-    lastMouseX += left;
+    const scrolled = gridsterElement.scrollLeft - scrollLeft;
+    if (left && !scrolled) {
+      cancelHorizontalScroll();
+      return;
+    }
+    lastMouseX += scrolled;
     calculateItemPosition({ clientX: lastMouseX, clientY: lastMouseY });
     animationH = requestAnimation(callback);
   };

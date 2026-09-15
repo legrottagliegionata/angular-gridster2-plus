@@ -209,11 +209,38 @@ describe('gridsterScroll', () => {
       expect(gridster.el.scrollTop).toBe(scrollSpeed);
     });
   });
+
+  // upstream #919: a grid that does not scroll (setGridSize) still moved the pointer by the scroll amount on every frame,
+  // so the dragged item kept going while the pointer stood still
+  describe('grid that cannot scroll', () => {
+    it('should not move the dragged item down and should stop the vertical scroll', () => {
+      const gridster = createGridster({ scrollable: false });
+      const calculateItemPosition = vi.fn();
+
+      scroll(gridster as never, mouseEvent({ clientY: 295 }), lastMouse(), calculateItemPosition);
+      runScrollFrame();
+
+      expect(calculateItemPosition).not.toHaveBeenCalled();
+      expect(frameCallbacks).toHaveLength(2);
+    });
+
+    it('should not move the dragged item right and should stop the horizontal scroll', () => {
+      const gridster = createGridster({ scrollable: false });
+      const calculateItemPosition = vi.fn();
+
+      scroll(gridster as never, mouseEvent({ clientX: 495 }), lastMouse(), calculateItemPosition);
+      runScrollFrame();
+
+      expect(calculateItemPosition).not.toHaveBeenCalled();
+      expect(frameCallbacks).toHaveLength(2);
+    });
+  });
 });
 
 interface GridsterStub {
   scrollTop?: number;
   scrollLeft?: number;
+  scrollable?: boolean;
   scale?: number;
   dirType?: DirTypes;
   disableScrollVertical?: boolean;
@@ -223,17 +250,21 @@ interface GridsterStub {
 function createGridster({
   scrollTop = 0,
   scrollLeft = 0,
+  scrollable = true,
   scale = 1,
   dirType = DirTypes.LTR,
   disableScrollVertical = false,
   disableScrollHorizontal = false
 }: GridsterStub = {}): { el: HTMLElement } {
   const el = document.createElement('div');
+  // an element without overflow keeps its scroll position at 0
+  const scrollPosition = (value: number) =>
+    scrollable ? { configurable: true, writable: true, value } : { configurable: true, get: () => 0, set: () => undefined };
   Object.defineProperties(el, {
     offsetWidth: { configurable: true, value: gridWidth },
     offsetHeight: { configurable: true, value: gridHeight },
-    scrollLeft: { configurable: true, writable: true, value: scrollLeft },
-    scrollTop: { configurable: true, writable: true, value: scrollTop },
+    scrollLeft: scrollPosition(scrollLeft),
+    scrollTop: scrollPosition(scrollTop),
     getBoundingClientRect: {
       configurable: true,
       value: () => ({ top: 0, left: 0, bottom: gridHeight * scale, right: gridWidth * scale })

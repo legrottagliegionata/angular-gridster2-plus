@@ -73,7 +73,7 @@ In scrolling grids, the grid scrolls when the **pointer** gets within `scrollSen
 | `disableScrollVertical`   | `false` | Turn off vertical auto-scroll                                                       |
 | `disableScrollHorizontal` | `false` | Turn off horizontal auto-scroll                                                     |
 
-Auto-scroll moves the scroll position of `<gridster>`: with `setGridSize: true` the page does not scroll while dragging.
+Auto-scroll moves the scroll position of `<gridster>`: with `setGridSize: true` the page does not scroll while dragging, and the item stays under the pointer.
 
 ## Boundary control
 

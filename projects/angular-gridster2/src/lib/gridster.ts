@@ -81,6 +81,11 @@ export class Gridster implements OnInit, OnDestroy {
   private resize$ = new Subject<void>();
   private destroy$ = new Subject<void>();
   private resizeObserver: ResizeObserver | null = null;
+  // outer size of the element when curWidth/curHeight were measured: tells a scrollbar appearing apart from a container resize
+  private measuredOffsetWidth = 0;
+  private measuredOffsetHeight = 0;
+  // client size of the layout left because the grid's own scrollbar appeared or disappeared
+  private scrollbarLeftSize: { width: number; height: number } | null = null;
 
   constructor() {
     effect(() => {
@@ -152,7 +157,9 @@ export class Gridster implements OnInit, OnDestroy {
   private resize(): void {
     let height: number;
     let width: number;
-    if (this.$options().gridType === 'fit' && !this.mobile) {
+    const $options = this.$options();
+    // measured like setGridSize(): comparing a different size recalculates the layout on every check (upstream #678)
+    if ($options.setGridSize || ($options.gridType === GridType.Fit && !this.mobile)) {
       width = this.el.offsetWidth;
       height = this.el.offsetHeight;
     } else {
@@ -212,13 +219,25 @@ export class Gridster implements OnInit, OnDestroy {
     const clientHeight = this.el.clientHeight;
     const offsetHeight = this.el.offsetHeight;
     const scrollHeight = this.el.scrollHeight;
+    if (offsetWidth !== this.measuredOffsetWidth || offsetHeight !== this.measuredOffsetHeight) {
+      // the container changed size: always follow it, otherwise the layout stays frozen
+      this.scrollbarLeftSize = null;
+      return true;
+    }
+    // same outer size: only the grid's own scrollbar appeared or disappeared
     const verticalScrollPresent = clientWidth < offsetWidth && scrollHeight > offsetHeight && scrollHeight - offsetHeight < offsetWidth - clientWidth;
     const horizontalScrollPresent =
       clientHeight < offsetHeight && scrollWidth > offsetWidth && scrollWidth - offsetWidth < offsetHeight - clientHeight;
-    if (verticalScrollPresent) {
+    if (verticalScrollPresent || horizontalScrollPresent) {
       return false;
     }
-    return !horizontalScrollPresent;
+    const leftSize = this.scrollbarLeftSize;
+    if (leftSize && leftSize.width === clientWidth && leftSize.height === clientHeight) {
+      // going back to the size left one resize ago brings the scrollbar back, and so on (upstream #669, #899)
+      return false;
+    }
+    this.scrollbarLeftSize = { width: this.curWidth, height: this.curHeight };
+    return true;
   }
 
   checkIfMobile(): boolean {
@@ -244,6 +263,8 @@ export class Gridster implements OnInit, OnDestroy {
     }
     this.curWidth = width;
     this.curHeight = height;
+    this.measuredOffsetWidth = el.offsetWidth;
+    this.measuredOffsetHeight = el.offsetHeight;
   }
 
   setGridDimensions(): void {
@@ -334,8 +355,12 @@ export class Gridster implements OnInit, OnDestroy {
     if ($options.setGridSize) {
       this.renderer.addClass(this.el, 'gridSize');
       if (!this.mobile) {
-        this.renderer.setStyle(this.el, 'width', this.columns * this.curColWidth + marginWidth + 'px');
-        this.renderer.setStyle(this.el, 'height', this.rows * this.curRowHeight + marginHeight + 'px');
+        // set only the sizes that come from the content: a size pinned to its own measure no longer follows the container (upstream #838)
+        const widthFromContainer =
+          $options.gridType === GridType.Fit || $options.gridType === GridType.ScrollVertical || $options.gridType === GridType.VerticalFixed;
+        const heightFromContainer = $options.gridType === GridType.Fit;
+        this.renderer.setStyle(this.el, 'width', widthFromContainer ? '' : this.columns * this.curColWidth + marginWidth + 'px');
+        this.renderer.setStyle(this.el, 'height', heightFromContainer ? '' : this.rows * this.curRowHeight + marginHeight + 'px');
       }
     } else {
       this.renderer.removeClass(this.el, 'gridSize');

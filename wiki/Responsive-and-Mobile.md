@@ -4,6 +4,8 @@
 
 The grid recalculates its layout when the window is resized and when its container changes size (for example a side panel that collapses, a split view or a tab that becomes visible), through a `ResizeObserver`.
 
+When the new layout only makes the grid's own scrollbar appear or disappear, the grid keeps that layout instead of recalculating it again, so it does not flicker between two sizes: the items can be off by the width of the scrollbar.
+
 `disableWindowResize: true` turns both off. Then call `api.resize()` whenever the size of the grid changes. See [API](API).
 
 ## Mobile layout

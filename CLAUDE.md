@@ -74,4 +74,6 @@ gridsterScroll.ts                 edge auto-scroll; keeps its state in MODULE-LE
 - Hand-written `GridsterItem` mocks must include the `isMoving` / `isResizing` signals used by drag/resize start/stop; pass untyped mocks `as never` instead of typing them `any`.
 - Coverage of push/swap/resize logic is thin: add focused specs when touching it.
 - When measuring layout in the demo from scripts, disable `transition` on `gridster-item` first: its `transition: .3s` animates sizes and even `flex-shrink`, so values are read mid-animation.
+- Resize and scrollbar behaviour needs real layout. The Browser pane on macOS uses overlay scrollbars: force classic ones with `::-webkit-scrollbar { width: 15px; height: 15px }`. The `/misc` demo sets `disableWindowResize: true` (no `ResizeObserver`, no window listener): override it before testing resizes.
+- Push/swap bugs are best reproduced on real components in jsdom: drive `item.drag.dragStart()` → set `drag.left/top` → `drag.calculateItemPosition()` → `drag.dragStop()` with a `fixed` grid (`fixedColWidth`/`fixedRowHeight` 100, margin 0) and `gridster.calculateLayout()` first (see `tests/gridsterSwap.spec.ts`).
 - On GitHub Pages, deep links such as `/emptyCell` are served through `404.html`: they work in the browser but return HTTP 404.

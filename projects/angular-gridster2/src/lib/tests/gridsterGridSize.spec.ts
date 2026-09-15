@@ -42,7 +42,8 @@ describe('gridster component', () => {
     expect(gridsterComponent.el.style.height).toBe('210px');
   });
 
-  it('does not grow verticalFixed grid width on repeated layout', async () => {
+  // upstream #838: the width of a vertical grid was pinned to its first measure, so it did not follow the container any more
+  it('leaves the width of a verticalFixed grid to its container, also on repeated layout', async () => {
     Object.defineProperty(gridsterComponent.el, 'offsetWidth', {
       configurable: true,
       get: () => Number.parseFloat(gridsterComponent.el.style.width) || 300
@@ -65,7 +66,27 @@ describe('gridster component', () => {
     gridsterComponent.api.calculateLayout();
     gridsterComponent.api.calculateLayout();
 
-    expect(gridsterComponent.el.style.width).toBe('300px');
+    expect(gridsterComponent.el.style.width).toBe('');
+    expect(gridsterComponent.el.style.height).toBe('210px');
+  });
+
+  it('leaves both sizes of a fit grid to its container', async () => {
+    fixture.componentRef.setInput('options', {
+      gridType: 'fit',
+      setGridSize: true,
+      minCols: 2,
+      minRows: 2,
+      mobileBreakpoint: 0,
+      margin: 10
+    });
+    fixture.detectChanges();
+
+    await fixture.whenStable();
+
+    gridsterComponent.api.calculateLayout();
+
+    expect(gridsterComponent.el.style.width).toBe('');
+    expect(gridsterComponent.el.style.height).toBe('');
   });
 
   it('adds the outer margin overrides to the fixed grid size', async () => {

@@ -46,9 +46,15 @@ With `fixedRowHeight: 100`, `margin: 10` and `ignoreMarginInRow: true`, a 2-row 
 
 ## setGridSize
 
-By default `<gridster>` fills its parent and scrolls internally. With `setGridSize: true` the grid element gets the size of its content (columns × column width plus the outer margins), so the page or a parent container scrolls instead of the grid.
+By default `<gridster>` fills its parent and scrolls internally. With `setGridSize: true` the grid element gets the size of its content in the directions it grows, so the page or a parent container scrolls instead of the grid:
 
-- Use it with `fixed`, `verticalFixed` or `horizontalFixed`; with `fit` the grid still fills its parent.
+| Grid type                             | Size set by the grid                    |
+| ------------------------------------- | --------------------------------------- |
+| `fixed`                               | width and height                        |
+| `verticalFixed`, `scrollVertical`     | height; the width follows the container |
+| `horizontalFixed`, `scrollHorizontal` | width                                   |
+| `fit`                                 | none, the grid fills its parent         |
+
 - The size includes `outerMarginLeft/Right/Top/Bottom` and leaves out the outer margin when `outerMargin` is `false`.
 - Auto-scroll during a drag scrolls the grid element only: it does not scroll the page.
 

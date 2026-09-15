@@ -140,13 +140,11 @@ export class GridsterRenderer {
   }
 
   getGridRowStyle(i: number): CommonGridStyle {
-    const $options = this.gridster.$options();
-    const margin = $options.margin;
-    const trailingMargin = $options.outerMargin ? margin : -margin;
-    // generates the new style
+    const margin = this.gridster.$options().margin;
+    // generates the new style, as wide as the columns: the last one ends one margin before its cell edge (upstream #897)
     const newPos: GridRowCachedStyle = {
       top: this.gridster.curRowHeight * i,
-      width: this.gridster.gridColumns.length * this.gridster.curColWidth + trailingMargin,
+      width: this.gridster.gridColumns.length * this.gridster.curColWidth - margin,
       height: this.gridster.curRowHeight - margin,
       style: {}
     };

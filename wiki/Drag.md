@@ -75,6 +75,8 @@ In scrolling grids, the grid scrolls when the **pointer** gets within `scrollSen
 
 Auto-scroll moves the scroll position of `<gridster>`: with `setGridSize: true` the page does not scroll while dragging, and the item stays under the pointer.
 
+Scrolling the grid yourself during a drag, with the wheel or a trackpad, also keeps the item under the pointer. A drag the browser turns into a native one, which happens when the pointer starts on selected text, is stopped instead of leaving the item floating.
+
 ## Boundary control
 
 `enableBoundaryControl: true` keeps dragged and resized items inside the grid edges.

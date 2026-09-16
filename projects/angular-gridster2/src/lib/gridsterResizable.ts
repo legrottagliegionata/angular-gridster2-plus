@@ -224,7 +224,10 @@ export class GridsterResizable {
     }
 
     e.stopPropagation();
-    e.preventDefault();
+    if (e.cancelable) {
+      // a touchmove during a scroll cannot be cancelled: calling preventDefault only logs an intervention (upstream #563)
+      e.preventDefault();
+    }
     GridsterUtils.checkTouchEvent(e);
     this.offsetTop = this.gridster.el.scrollTop - this.gridster.el.offsetTop;
     this.offsetLeft = this.gridster.el.scrollLeft - this.gridster.el.offsetLeft;

@@ -389,8 +389,9 @@ export class Gridster implements OnInit, OnDestroy {
       this.renderer.removeClass(this.el, 'display-grid');
     }
     this.setGridDimensions();
-    this.gridColumns.length = Gridster.getNewArrayLength(this.columns, this.curWidth, this.curColWidth);
-    this.gridRows.length = Gridster.getNewArrayLength(this.rows, this.curHeight, this.curRowHeight);
+    // the lines fill the visible area, but never show columns or rows the items could not use (upstream #790, #700)
+    this.gridColumns.length = Math.min(Gridster.getNewArrayLength(this.columns, this.curWidth, this.curColWidth), $options.maxCols);
+    this.gridRows.length = Math.min(Gridster.getNewArrayLength(this.rows, this.curHeight, this.curRowHeight), $options.maxRows);
     this.cdRef.markForCheck();
   }
 

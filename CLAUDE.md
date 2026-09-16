@@ -2,7 +2,7 @@
 
 Community fork of [tiberiuzuld/angular-gridster2](https://github.com/tiberiuzuld/angular-gridster2), maintained as an independent open-source project. Upstream only bumps dependencies; this fork resumes bug fixing and development.
 
-- Published as `angular-gridster2-plus` (not on npm yet: the first release is manual, later releases go through `publish.yml` on `v*` tags with npm trusted publishing)
+- Published on npm as [`angular-gridster2-plus`](https://www.npmjs.com/package/angular-gridster2-plus); 22.1.0 was published by hand, later releases go through `publish.yml` on `v*` tags with npm trusted publishing
 - Demo: https://legrottagliegionata.github.io/angular-gridster2-plus, deployed by the `Deploy Demo` workflow from `master` to `gh-pages`
 - Changes land on `master` through pull requests; the `CI` workflow runs the library tests and builds the library and the demo
 - Upstream remote: `upstream` → `https://github.com/tiberiuzuld/angular-gridster2.git`

@@ -14,19 +14,19 @@ npm ci --legacy-peer-deps
 | ----------------------------------- | ------------------------------------------------------ |
 | `npm start`                         | Demo application on http://localhost:4200              |
 | `npm run test-lib -- --watch=false` | Library unit tests (Vitest, jsdom, zoneless)           |
-| `npm run build-lib`                 | Build the library into `dist/angular-gridster2`        |
+| `npm run build-lib`                 | Build the library into `dist/angular-gridster2-plus`   |
 | `npx ng build gridster-app`         | Production build of the demo (needs `build-lib` first) |
 | `npm run lint`                      | ESLint                                                 |
 
 ## Repository layout
 
-| Path                                        | Content                            |
-| ------------------------------------------- | ---------------------------------- |
-| `projects/angular-gridster2/src/lib/`       | The library                        |
-| `projects/angular-gridster2/src/lib/tests/` | Unit tests                         |
-| `src/app/sections/`                         | Demo pages, one per feature        |
-| `wiki/`                                     | These wiki pages                   |
-| `docs/`                                     | Upstream tracking and issue triage |
+| Path                                             | Content                            |
+| ------------------------------------------------ | ---------------------------------- |
+| `projects/angular-gridster2-plus/src/lib/`       | The library                        |
+| `projects/angular-gridster2-plus/src/lib/tests/` | Unit tests                         |
+| `src/app/sections/`                              | Demo pages, one per feature        |
+| `wiki/`                                          | These wiki pages                   |
+| `docs/`                                          | Upstream tracking and issue triage |
 
 ## Pull requests
 
@@ -39,7 +39,7 @@ npm ci --legacy-peer-deps
 
 Version numbers follow the Angular major the library supports: `22.x` for Angular 22.
 
-A release is a pull request that bumps `version` in `package.json` and `projects/angular-gridster2/package.json`, followed by a `v<version>` tag on `master`. The `Publish Package` workflow then checks the tag against the package version, runs the tests, builds the library and publishes it to npm.
+A release is a pull request that bumps `version` in `package.json` and `projects/angular-gridster2-plus/package.json`, followed by a `v<version>` tag on `master`. The `Publish Package` workflow then checks the tag against the package version, runs the tests, builds the library and publishes it to npm.
 
 ## How the library works
 

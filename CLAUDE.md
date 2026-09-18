@@ -16,7 +16,7 @@ Community fork of [tiberiuzuld/angular-gridster2](https://github.com/tiberiuzuld
 ```bash
 npm ci --legacy-peer-deps                 # plain `npm ci` fails: lockfile lacks peer zone.js
 npm run test-lib -- --watch=false         # library unit tests (vitest + jsdom, zoneless)
-npm run build-lib                         # ng-packagr build into dist/angular-gridster2
+npm run build-lib                         # ng-packagr build into dist/angular-gridster2-plus
 npx ng build gridster-app                 # production build of the demo (needs build-lib first), baseHref /angular-gridster2-plus/
 npm run lint                              # angular-eslint; 32 problems inherited from upstream, do not add new ones
 npm start                                 # demo app (src/app) on localhost:4200
@@ -26,9 +26,9 @@ Do not commit incidental `package-lock.json` changes produced by `npm install`.
 
 ## Release
 
-What reaches npm is `dist/angular-gridster2`, built from `projects/angular-gridster2`.
+What reaches npm is `dist/angular-gridster2-plus`, built from `projects/angular-gridster2-plus`.
 
-1. In a pull request, bump `version` to the same number in `package.json` and `projects/angular-gridster2/package.json`, and sync the lockfile with `npm install --package-lock-only --legacy-peer-deps`.
+1. In a pull request, bump `version` to the same number in `package.json` and `projects/angular-gridster2-plus/package.json`, and sync the lockfile with `npm install --package-lock-only --legacy-peer-deps`.
 2. After the merge, tag `master`: `git tag v<version> && git push origin v<version>`. Never `git push --tags`: the clone carries 272 tags inherited from upstream and none of them belong to this fork (its remote has no tags).
 3. `publish.yml` checks the tag against the package version, runs the library tests, builds the library and publishes it with npm trusted publishing (OIDC, no token in the repository).
 
@@ -38,16 +38,16 @@ Version numbers follow the Angular major (`22.x` for Angular 22). The first rele
 
 - Conventional commits, enforced by commitlint in the husky `commit-msg` hook; `pre-commit` runs prettier via lint-staged.
 - When integrating an upstream PR: keep the original author (`--author`), reference it as `(upstream #<n>)` and the issues it fixes.
-- Every behavioural fix comes with a regression spec in `projects/angular-gridster2/src/lib/tests/`.
+- Every behavioural fix comes with a regression spec in `projects/angular-gridster2-plus/src/lib/tests/`.
 - Components are standalone, `ChangeDetectionStrategy.OnPush`, `ViewEncapsulation.None`, signal `input()`/`output()`.
 - Upstream is referenced only for credits and upstream tracking: package metadata, demo links and workflows point to this repository.
 
 ## Layout
 
-- `projects/angular-gridster2/src/lib/` – the library (public surface in `src/public_api.ts`); the folder, the Angular project and `dist/angular-gridster2` keep the upstream name, the npm package is `angular-gridster2-plus`
-- `projects/angular-gridster2/src/lib/tests/` – specs
-- `projects/angular-gridster2/README.md` and `LICENSE` are symlinks to the root files: edit the root ones
-- `src/app/sections/*` – demo pages, one per feature. They only show examples and link to the matching wiki page (Docs button). The demo imports `angular-gridster2-plus`, mapped by the `tsconfig.json` path alias to `dist/angular-gridster2` or the library sources
+- `projects/angular-gridster2-plus/src/lib/` – the library (public surface in `src/public_api.ts`); the folder, the Angular project and `dist/angular-gridster2-plus` keep the upstream name, the npm package is `angular-gridster2-plus`
+- `projects/angular-gridster2-plus/src/lib/tests/` – specs
+- `projects/angular-gridster2-plus/README.md` and `LICENSE` are symlinks to the root files: edit the root ones
+- `src/app/sections/*` – demo pages, one per feature. They only show examples and link to the matching wiki page (Docs button). The demo imports `angular-gridster2-plus`, mapped by the `tsconfig.json` path alias to `dist/angular-gridster2-plus` or the library sources
 - `wiki/` – source of the GitHub wiki (the user documentation). Update it in the same PR as any behaviour or option change; `wiki.yml` publishes it on merge. Internal links are `[Text](Page-Name#anchor)`
 - `.github/workflows/` – `ci.yml` (pull requests and `master`), `deploy-demo.yml` (`master`, manual), `wiki.yml` (`wiki/` changes on `master`, manual), `publish.yml` (`v*` tags)
 

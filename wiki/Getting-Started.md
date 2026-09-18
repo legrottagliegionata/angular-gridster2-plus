@@ -11,7 +11,7 @@
 npm install angular-gridster2-plus --save
 ```
 
-> The first `angular-gridster2-plus` release on npm is being prepared. Until it is published, build the library from the repository (`npm run build-lib`) and install `dist/angular-gridster2`.
+> The first `angular-gridster2-plus` release on npm is being prepared. Until it is published, build the library from the repository (`npm run build-lib`) and install `dist/angular-gridster2-plus`.
 
 The component styles are bundled with the components: there is no stylesheet to import.
 

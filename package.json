@@ -1,6 +1,6 @@
 {
   "name": "angular-gridster2-plus",
-  "version": "22.1.0",
+  "version": "22.1.1",
   "license": "MIT",
   "scripts": {
     "husky": "husky",
@@ -9,9 +9,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build-lib": "ng build angular-gridster2 && cp LICENSE dist/angular-gridster2 && cp README.md dist/angular-gridster2",
+    "build-lib": "ng build angular-gridster2-plus && cp LICENSE dist/angular-gridster2-plus && cp README.md dist/angular-gridster2-plus",
     "test": "ng test",
-    "test-lib": "ng test angular-gridster2",
+    "test-lib": "ng test angular-gridster2-plus",
     "lint": "ng lint",
     "watch": "ng build --watch --configuration development",
     "deploy": "ng deploy",
@@ -36,7 +36,8 @@
     "resize",
     "drag&drop",
     "widgets",
-    "angular-gridster2"
+    "angular-gridster2",
+    "angular-gridster2-plus"
   ],
   "author": "Gionata Legrottaglie (https://github.com/legrottagliegionata)",
   "contributors": [

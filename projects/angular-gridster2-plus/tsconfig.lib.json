@@ -3,7 +3,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../out-tsc/angular-gridster2",
+    "outDir": "../../out-tsc/angular-gridster2-plus",
     "module": "ES2022",
     "moduleResolution": "bundler",
     "declaration": true,

@@ -17,6 +17,7 @@ options: GridsterConfig = {
 - Resizing is disabled in the mobile layout.
 - While resizing, the item gets the `gridster-item-resizing` class.
 - On release the grid updates `cols`/`rows` (and `x`/`y` when resizing from the top or left) and emits `itemChange`.
+- In scrolling grids the grid auto-scrolls near its edges as in [Drag](Drag#auto-scroll), and the edge being resized follows the scroll, also when you scroll with the wheel.
 
 ## Handles
 

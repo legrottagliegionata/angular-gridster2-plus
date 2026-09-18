@@ -4,7 +4,7 @@ import { Gridster } from './gridster';
 import { DirTypes } from './gridsterConfig';
 import { GridsterItem } from './gridsterItem';
 import { GridsterPush } from './gridsterPush';
-import { cancelScroll, isAutoScrolling, scroll } from './gridsterScroll';
+import { cancelScroll, scroll } from './gridsterScroll';
 import { GridsterSwap } from './gridsterSwap';
 import { GridsterUtils } from './gridsterUtils';
 
@@ -117,19 +117,14 @@ export class GridsterDraggable {
     this.outerMarginRight = $options.outerMarginRight;
     this.outerMarginBottom = $options.outerMarginBottom;
     this.outerMarginLeft = $options.outerMarginLeft;
-    this.offsetLeft = this.gridster.el.scrollLeft - this.gridster.el.offsetLeft;
-    this.offsetTop = this.gridster.el.scrollTop - this.gridster.el.offsetTop;
+    this.updateScrollOffsets();
     this.left = this.gridsterItem.left - this.margin;
     this.top = this.gridsterItem.top - this.margin;
     this.originalClientX = e.clientX;
     this.originalClientY = e.clientY;
     this.width = this.gridsterItem.width;
     this.height = this.gridsterItem.height;
-    if ($options.dirType === DirTypes.RTL) {
-      this.diffLeft = e.clientX - this.gridster.el.scrollWidth + this.gridsterItem.left;
-    } else {
-      this.diffLeft = e.clientX + this.offsetLeft - this.margin - this.left;
-    }
+    this.diffLeft = e.clientX + this.offsetLeft - this.margin - this.left;
     this.diffTop = e.clientY + this.offsetTop - this.margin - this.top;
     this.gridster.movingItem = this.gridsterItem.$item();
     this.gridster.previewStyle(true);
@@ -205,57 +200,46 @@ export class GridsterDraggable {
 
     // do not change item location when there is no direction to go
     if (directions.length) {
-      this.offsetLeft = this.gridster.el.scrollLeft - this.gridster.el.offsetLeft;
-      this.offsetTop = this.gridster.el.scrollTop - this.gridster.el.offsetTop;
-      scroll(this.gridster, e, this.lastMouse, this.calculateItemPositionFromMousePosition);
+      this.updateScrollOffsets();
+      scroll(this.gridster, e, this.lastMouse, this.gridScrolled);
 
       this.calculateItemPositionFromMousePosition(e);
     }
   };
 
-  // the pointer stands still while the grid is scrolled with the wheel: keep the item under it (upstream #735)
+  // called for the wheel (upstream #735) and for every auto-scroll step: it only reads the current scroll position
+  // and the last pointer position, so the item stays under the pointer however often it runs
   gridScrolled = (): void => {
-    if (!this.gridster || isAutoScrolling()) {
-      // gridsterScroll already moves the item along with the scroll position it makes
+    if (!this.gridster) {
       return;
     }
-    this.offsetLeft = this.gridster.el.scrollLeft - this.gridster.el.offsetLeft;
-    this.offsetTop = this.gridster.el.scrollTop - this.gridster.el.offsetTop;
+    this.updateScrollOffsets();
     this.calculateItemPositionFromMousePosition(this.lastMouse);
   };
 
+  // RTL positions grow to the left, where scrollLeft goes negative: the horizontal scroll is mirrored like the pointer
+  private updateScrollOffsets(): void {
+    const el = this.gridster.el;
+    const scrollLeft = this.gridster.$options().dirType === DirTypes.RTL ? -el.scrollLeft : el.scrollLeft;
+    this.offsetLeft = scrollLeft - el.offsetLeft;
+    this.offsetTop = el.scrollTop - el.offsetTop;
+  }
+
   calculateItemPositionFromMousePosition = (e: Pick<MouseEvent, 'clientX' | 'clientY'>): void => {
-    const options = this.gridster.options();
-    if (options.scale) {
-      this.calculateItemPositionWithScale(e, options.scale);
-    } else {
-      this.calculateItemPositionWithoutScale(e);
-    }
+    const $options = this.gridster.$options();
+    // the pointer moves in screen pixels, the grid in its own pixels: a scaled grid (`scale`) needs the distance divided.
+    // RTL positions grow to the left, so the horizontal distance is mirrored
+    const scale = $options.scale || 1;
+    const directionX = $options.dirType === DirTypes.RTL ? -1 : 1;
+    const clientX = this.originalClientX + (directionX * (e.clientX - this.originalClientX)) / scale;
+    const clientY = this.originalClientY + (e.clientY - this.originalClientY) / scale;
+    this.left = clientX + this.offsetLeft - this.diffLeft;
+    this.top = clientY + this.offsetTop - this.diffTop;
     this.calculateItemPosition();
     this.lastMouse.clientX = e.clientX;
     this.lastMouse.clientY = e.clientY;
     this.zone.run(() => this.gridster.updateGrid());
   };
-
-  calculateItemPositionWithScale(e: Pick<MouseEvent, 'clientX' | 'clientY'>, scale: number): void {
-    if (this.gridster.$options().dirType === DirTypes.RTL) {
-      this.left = this.gridster.el.scrollWidth - this.originalClientX + (e.clientX - this.originalClientX) / scale + this.diffLeft;
-    } else {
-      this.left = this.originalClientX + (e.clientX - this.originalClientX) / scale + this.offsetLeft - this.diffLeft;
-    }
-    this.top = this.originalClientY + (e.clientY - this.originalClientY) / scale + this.offsetTop - this.diffTop;
-  }
-
-  calculateItemPositionWithoutScale(e: Pick<MouseEvent, 'clientX' | 'clientY'>): void {
-    const isRTL = this.gridster.$options().dirType === DirTypes.RTL;
-    if (isRTL) {
-      this.left = this.gridster.el.offsetWidth - (e.clientX + this.offsetLeft - this.diffLeft);
-    } else {
-      this.left = e.clientX + this.offsetLeft - this.diffLeft;
-    }
-
-    this.top = e.clientY + this.offsetTop - this.diffTop;
-  }
 
   dragStop = (e: MouseEvent, preventEvent = true): void => {
     if (preventEvent) {

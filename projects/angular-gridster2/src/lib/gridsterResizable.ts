@@ -48,6 +48,7 @@ export class GridsterResizable {
   touchmove: (() => void) | null;
   touchend: (() => void) | null;
   touchcancel: (() => void) | null;
+  gridScroll: (() => void) | null;
   push: GridsterPush;
   pushResize: GridsterPushResize;
   minHeight: number;
@@ -106,6 +107,7 @@ export class GridsterResizable {
     this.zone.runOutsideAngular(() => {
       this.mousemove = this.gridsterItem.renderer.listen('document', 'mousemove', this.dragMove);
       this.touchmove = this.gridster.renderer.listen(this.gridster.el, 'touchmove', this.dragMove);
+      this.gridScroll = this.gridster.renderer.listen(this.gridster.el, 'scroll', this.gridScrolled);
     });
     this.mouseup = this.gridsterItem.renderer.listen('document', 'mouseup', this.dragStop);
     this.mouseleave = this.gridsterItem.renderer.listen('document', 'mouseleave', this.dragStop);
@@ -130,8 +132,7 @@ export class GridsterResizable {
     this.outerMarginRight = $options.outerMarginRight;
     this.outerMarginBottom = $options.outerMarginBottom;
     this.outerMarginLeft = $options.outerMarginLeft;
-    this.offsetLeft = this.gridster.el.scrollLeft - this.gridster.el.offsetLeft;
-    this.offsetTop = this.gridster.el.scrollTop - this.gridster.el.offsetTop;
+    this.updateScrollOffsets();
     this.diffLeft = e.clientX + this.offsetLeft - this.left;
     this.diffRight = e.clientX + this.offsetLeft - this.right;
     this.diffTop = e.clientY + this.offsetTop - this.top;
@@ -229,22 +230,43 @@ export class GridsterResizable {
       e.preventDefault();
     }
     GridsterUtils.checkTouchEvent(e);
-    this.offsetTop = this.gridster.el.scrollTop - this.gridster.el.offsetTop;
-    this.offsetLeft = this.gridster.el.scrollLeft - this.gridster.el.offsetLeft;
-    scroll(this.gridster, e, this.lastMouse, this.directionFunction, true, this.resizeEventScrollType);
-
-    const scale = this.gridster.$options().scale;
-    this.directionFunction({
-      clientX: this.originalClientX + (e.clientX - this.originalClientX) / scale,
-      clientY: this.originalClientY + (e.clientY - this.originalClientY) / scale
-    });
+    this.updateScrollOffsets();
+    scroll(this.gridster, e, this.lastMouse, this.gridScrolled, true, this.resizeEventScrollType);
 
     this.lastMouse.clientX = e.clientX;
     this.lastMouse.clientY = e.clientY;
+    this.resizeToPointer(this.directionFunction);
+  };
+
+  // called for the wheel and for every auto-scroll step: it only reads the current scroll position
+  // and the last pointer position, so the resized edge stays under the pointer however often it runs
+  gridScrolled = (): void => {
+    if (!this.gridster || !this.directionFunction) {
+      return;
+    }
+    this.updateScrollOffsets();
+    this.resizeToPointer(this.directionFunction);
+  };
+
+  // RTL positions grow to the left, where scrollLeft goes negative: the horizontal scroll is mirrored like the pointer
+  private updateScrollOffsets(): void {
+    const el = this.gridster.el;
+    const scrollLeft = this.gridster.$options().dirType === DirTypes.RTL ? -el.scrollLeft : el.scrollLeft;
+    this.offsetLeft = scrollLeft - el.offsetLeft;
+    this.offsetTop = el.scrollTop - el.offsetTop;
+  }
+
+  private resizeToPointer(directionFunction: (event: Pick<MouseEvent, 'clientX' | 'clientY'>) => void): void {
+    // the pointer moves in screen pixels, the grid in its own pixels: a scaled grid (`scale`) needs the distance divided
+    const scale = this.gridster.$options().scale || 1;
+    directionFunction({
+      clientX: this.originalClientX + (this.lastMouse.clientX - this.originalClientX) / scale,
+      clientY: this.originalClientY + (this.lastMouse.clientY - this.originalClientY) / scale
+    });
     this.zone.run(() => {
       this.gridster.updateGrid();
     });
-  };
+  }
 
   dragStop = (e: MouseEvent): void => {
     if (!this.gridster || !this.push || !this.pushResize) {
@@ -287,7 +309,8 @@ export class GridsterResizable {
     this.touchmove?.();
     this.touchend?.();
     this.touchcancel?.();
-    this.mousemove = this.mouseup = this.mouseleave = this.cancelOnBlur = this.touchmove = this.touchend = this.touchcancel = null!;
+    this.gridScroll?.();
+    this.mousemove = this.mouseup = this.mouseleave = this.cancelOnBlur = this.touchmove = this.touchend = this.touchcancel = this.gridScroll = null!;
   }
 
   cancelResize = (): void => {

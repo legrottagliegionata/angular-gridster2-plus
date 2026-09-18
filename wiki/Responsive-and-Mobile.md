@@ -58,4 +58,13 @@ Save each layout separately (see [Saving and Restoring Layouts](Saving-and-Resto
 
 ## Browser zoom and CSS scale
 
-When the grid is inside an element scaled with CSS (`transform: scale()` or a zoom library), set `scale` to the same factor so pointer positions are converted correctly.
+Browser zoom needs nothing: the pointer and the grid are measured in the same CSS pixels.
+
+When the grid is inside an element scaled with `transform: scale()`, the CSS `zoom` property or a pan and zoom library, the pointer moves in screen pixels while the grid keeps its own, so dragged and resized items do not follow the pointer and empty-cell events land on the wrong cell. Set `scale` to the same factor:
+
+```typescript
+// the grid is inside <div style="transform: scale(0.5)">
+options: GridsterConfig = { scale: 0.5 };
+```
+
+`scale` applies to dragging, resizing, auto-scroll and empty-cell clicks, drags and drops. When the factor changes, for example with a zoom library, pass a new `options` object with the new value.

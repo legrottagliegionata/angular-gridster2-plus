@@ -76,7 +76,7 @@ With `useTransformPositioning: true` (the default) items are placed with `transf
 
 ## The grid is inside a CSS-scaled container and drags are offset
 
-Set the `scale` option to the scale factor of the container. See [Responsive and Mobile](Responsive-and-Mobile#browser-zoom-and-css-scale).
+Set the `scale` option to the scale factor of the container (`transform: scale()`, CSS `zoom` or a pan and zoom library). Browser zoom needs nothing. See [Responsive and Mobile](Responsive-and-Mobile#browser-zoom-and-css-scale).
 
 ## Can I nest grids?
 

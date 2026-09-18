@@ -14,8 +14,6 @@ let scrollN = false;
 let scrollS = false;
 let animationH: number | null;
 let animationV: number | null = null;
-let lastMouseX = 0;
-let lastMouseY = 0;
 let maxScrollX = Infinity;
 let maxScrollY = Infinity;
 
@@ -42,13 +40,14 @@ function cancelAnimation(id: number): void {
 
 type Position = Pick<MouseEvent, 'clientX' | 'clientY'>;
 
-type CalculatePosition = (position: Position) => void;
+// called after every auto-scroll step: the interaction reads the new scroll position of the grid and follows it
+type OnScroll = () => void;
 
 export function scroll(
   gridster: Gridster,
   event: MouseEvent,
   lastMouse: Position,
-  calculateItemPosition: CalculatePosition,
+  onScroll: OnScroll,
   resize?: boolean,
   resizeEventScrollType?: GridsterResizeEventType
 ): void {
@@ -68,9 +67,6 @@ export function scroll(
   const gridRect = gridsterElement.getBoundingClientRect();
   const scale = $options.scale || 1;
 
-  lastMouseX = clientX;
-  lastMouseY = clientY;
-
   if (!$options.disableScrollVertical) {
     const pointerTopOffset = (clientY - gridRect.top) / scale;
     const pointerBottomOffset = (gridRect.bottom - clientY) / scale;
@@ -78,12 +74,12 @@ export function scroll(
     if (pointerBottomOffset < scrollSensitivity) {
       cancelN();
       if (!(resizeEvent && resizeEventType && !resizeEventType.south) && !scrollS) {
-        startVerticalScroll(1, calculateItemPosition, gridster);
+        startVerticalScroll(1, onScroll, gridster);
       }
     } else if (offsetTop > 0 && pointerTopOffset < scrollSensitivity) {
       cancelS();
       if (!(resizeEvent && resizeEventType && !resizeEventType.north) && !scrollN) {
-        startVerticalScroll(-1, calculateItemPosition, gridster);
+        startVerticalScroll(-1, onScroll, gridster);
       }
     } else if (lastMouse.clientY !== clientY) {
       cancelVerticalScroll();
@@ -100,12 +96,12 @@ export function scroll(
     if (pointerEndOffset <= scrollSensitivity) {
       cancelW();
       if (!(resizeEvent && resizeEventType && !resizeEventType.east) && !scrollE) {
-        startHorizontalScroll(1, calculateItemPosition, gridster, isRTL);
+        startHorizontalScroll(1, onScroll, gridster, isRTL);
       }
     } else if (offsetLeft > 0 && pointerStartOffset < scrollSensitivity) {
       cancelE();
       if (!(resizeEvent && resizeEventType && !resizeEventType.west) && !scrollW) {
-        startHorizontalScroll(-1, calculateItemPosition, gridster, isRTL);
+        startHorizontalScroll(-1, onScroll, gridster, isRTL);
       }
     } else if (lastMouse.clientX !== clientX) {
       cancelHorizontalScroll();
@@ -113,7 +109,7 @@ export function scroll(
   }
 }
 
-function startVerticalScroll(sign: number, calculateItemPosition: CalculatePosition, gridster: Gridster): void {
+function startVerticalScroll(sign: number, onScroll: OnScroll, gridster: Gridster): void {
   if (sign > 0) {
     scrollS = true;
 
@@ -149,16 +145,14 @@ function startVerticalScroll(sign: number, calculateItemPosition: CalculatePosit
       top = maxScrollY - gridsterElement.scrollTop;
     }
 
-    // follow the distance the grid really scrolled: a grid that cannot scroll (setGridSize) moved the item forever (upstream #919)
+    // stop when the grid does not scroll: a grid that cannot scroll (setGridSize) moved the item forever (upstream #919)
     const scrollTop = gridsterElement.scrollTop;
     gridsterElement.scrollTop += top;
-    const scrolled = gridsterElement.scrollTop - scrollTop;
-    if (top && !scrolled) {
+    if (top && gridsterElement.scrollTop === scrollTop) {
       cancelVerticalScroll();
       return;
     }
-    lastMouseY += scrolled;
-    calculateItemPosition({ clientX: lastMouseX, clientY: lastMouseY });
+    onScroll();
 
     if ((scrollN && gridsterElement.scrollTop <= 0) || (scrollS && gridsterElement.scrollTop >= maxScrollY)) {
       cancelVerticalScroll();
@@ -169,7 +163,7 @@ function startVerticalScroll(sign: number, calculateItemPosition: CalculatePosit
   animationV = requestAnimation(callback);
 }
 
-function startHorizontalScroll(sign: number, calculateItemPosition: CalculatePosition, gridster: Gridster, isRTL: boolean): void {
+function startHorizontalScroll(sign: number, onScroll: OnScroll, gridster: Gridster, isRTL: boolean): void {
   if (sign > 0) {
     scrollE = true;
 
@@ -205,24 +199,18 @@ function startHorizontalScroll(sign: number, calculateItemPosition: CalculatePos
       return;
     }
 
-    // follow the distance the grid really scrolled (upstream #919)
+    // stop when the grid does not scroll (upstream #919)
     const scrollLeft = gridsterElement.scrollLeft;
     gridsterElement.scrollLeft += left;
-    const scrolled = gridsterElement.scrollLeft - scrollLeft;
-    if (left && !scrolled) {
+    if (left && gridsterElement.scrollLeft === scrollLeft) {
       cancelHorizontalScroll();
       return;
     }
-    lastMouseX += scrolled;
-    calculateItemPosition({ clientX: lastMouseX, clientY: lastMouseY });
+    onScroll();
     animationH = requestAnimation(callback);
   };
 
   animationH = requestAnimation(callback);
-}
-
-export function isAutoScrolling(): boolean {
-  return scrollE || scrollW || scrollN || scrollS;
 }
 
 export function cancelScroll(): void {

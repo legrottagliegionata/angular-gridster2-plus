@@ -221,6 +221,10 @@ function startHorizontalScroll(sign: number, calculateItemPosition: CalculatePos
   animationH = requestAnimation(callback);
 }
 
+export function isAutoScrolling(): boolean {
+  return scrollE || scrollW || scrollN || scrollS;
+}
+
 export function cancelScroll(): void {
   cancelHorizontalScroll();
   cancelVerticalScroll();

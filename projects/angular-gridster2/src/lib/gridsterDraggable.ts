@@ -4,7 +4,7 @@ import { Gridster } from './gridster';
 import { DirTypes } from './gridsterConfig';
 import { GridsterItem } from './gridsterItem';
 import { GridsterPush } from './gridsterPush';
-import { cancelScroll, scroll } from './gridsterScroll';
+import { cancelScroll, isAutoScrolling, scroll } from './gridsterScroll';
 import { GridsterSwap } from './gridsterSwap';
 import { GridsterUtils } from './gridsterUtils';
 
@@ -50,6 +50,8 @@ export class GridsterDraggable {
   touchmove: (() => void) | null;
   touchend: (() => void) | null;
   touchcancel: (() => void) | null;
+  gridScroll: (() => void) | null;
+  nativeDragStart: (() => void) | null;
   mousedown: () => void;
   touchstart: () => void;
   push: GridsterPush;
@@ -98,6 +100,7 @@ export class GridsterDraggable {
     this.zone.runOutsideAngular(() => {
       this.mousemove = this.gridsterItem.renderer.listen('document', 'mousemove', this.dragMove);
       this.touchmove = this.gridster.renderer.listen(this.gridster.el, 'touchmove', this.dragMove);
+      this.gridScroll = this.gridster.renderer.listen(this.gridster.el, 'scroll', this.gridScrolled);
     });
     this.mouseup = this.gridsterItem.renderer.listen('document', 'mouseup', this.dragStop);
     this.mouseleave = this.gridsterItem.renderer.listen('document', 'mouseleave', this.dragStop);
@@ -105,6 +108,8 @@ export class GridsterDraggable {
     this.cancelOnBlur = this.gridsterItem.renderer.listen('window', 'blur', this.dragStop);
     this.touchend = this.gridsterItem.renderer.listen('document', 'touchend', this.dragStop);
     this.touchcancel = this.gridsterItem.renderer.listen('document', 'touchcancel', this.dragStop);
+    // a native drag (dragging selected text) swallows the mouseup: stop here or the item keeps following the pointer (upstream #421)
+    this.nativeDragStart = this.gridsterItem.renderer.listen(this.gridsterItem.el, 'dragstart', this.dragStop);
     this.gridsterItem.renderer.addClass(this.gridsterItem.el, 'gridster-item-moving');
     this.gridsterItem.isMoving.set(true);
     this.margin = $options.margin;
@@ -140,7 +145,10 @@ export class GridsterDraggable {
 
   dragMove = (e: MouseEvent): void => {
     e.stopPropagation();
-    e.preventDefault();
+    if (e.cancelable) {
+      // a touchmove during a scroll cannot be cancelled: calling preventDefault only logs an intervention (upstream #563)
+      e.preventDefault();
+    }
     GridsterUtils.checkTouchEvent(e);
 
     // get the directions of the mouse event
@@ -205,7 +213,18 @@ export class GridsterDraggable {
     }
   };
 
-  calculateItemPositionFromMousePosition = (e: MouseEvent): void => {
+  // the pointer stands still while the grid is scrolled with the wheel: keep the item under it (upstream #735)
+  gridScrolled = (): void => {
+    if (!this.gridster || isAutoScrolling()) {
+      // gridsterScroll already moves the item along with the scroll position it makes
+      return;
+    }
+    this.offsetLeft = this.gridster.el.scrollLeft - this.gridster.el.offsetLeft;
+    this.offsetTop = this.gridster.el.scrollTop - this.gridster.el.offsetTop;
+    this.calculateItemPositionFromMousePosition(this.lastMouse);
+  };
+
+  calculateItemPositionFromMousePosition = (e: Pick<MouseEvent, 'clientX' | 'clientY'>): void => {
     const options = this.gridster.options();
     if (options.scale) {
       this.calculateItemPositionWithScale(e, options.scale);
@@ -218,7 +237,7 @@ export class GridsterDraggable {
     this.zone.run(() => this.gridster.updateGrid());
   };
 
-  calculateItemPositionWithScale(e: MouseEvent, scale: number): void {
+  calculateItemPositionWithScale(e: Pick<MouseEvent, 'clientX' | 'clientY'>, scale: number): void {
     if (this.gridster.$options().dirType === DirTypes.RTL) {
       this.left = this.gridster.el.scrollWidth - this.originalClientX + (e.clientX - this.originalClientX) / scale + this.diffLeft;
     } else {
@@ -227,7 +246,7 @@ export class GridsterDraggable {
     this.top = this.originalClientY + (e.clientY - this.originalClientY) / scale + this.offsetTop - this.diffTop;
   }
 
-  calculateItemPositionWithoutScale(e: MouseEvent): void {
+  calculateItemPositionWithoutScale(e: Pick<MouseEvent, 'clientX' | 'clientY'>): void {
     const isRTL = this.gridster.$options().dirType === DirTypes.RTL;
     if (isRTL) {
       this.left = this.gridster.el.offsetWidth - (e.clientX + this.offsetLeft - this.diffLeft);
@@ -282,6 +301,8 @@ export class GridsterDraggable {
 
   private removeDragListeners(): void {
     this.cancelOnBlur?.();
+    this.gridScroll?.();
+    this.nativeDragStart?.();
     this.mousemove?.();
     this.mouseup?.();
     this.mouseleave?.();
@@ -290,6 +311,8 @@ export class GridsterDraggable {
     this.touchend?.();
     this.touchcancel?.();
     this.cancelOnBlur =
+      this.nativeDragStart =
+      this.gridScroll =
       this.mousemove =
       this.mouseup =
       this.mouseleave =
@@ -376,7 +399,7 @@ export class GridsterDraggable {
     this.gridster.gridRenderer.setCellPosition(this.gridsterItem.renderer, this.gridsterItem.el, this.left, this.top);
 
     if (this.positionXBackup !== $item.x || this.positionYBackup !== $item.y) {
-      const lastPosition = this.path[this.path.length - 1];
+      const lastPosition = this.path[this.path.length - 1] ?? { x: this.positionXBackup, y: this.positionYBackup };
       let direction = '';
       if (lastPosition.x < $item.x) {
         direction = this.push.fromWest;

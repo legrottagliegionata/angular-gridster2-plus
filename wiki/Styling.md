@@ -54,7 +54,7 @@ gridster-preview {
 | `always`                  | always, except in the mobile layout |
 | `none`                    | never                               |
 
-The lines fill the visible area of the grid, so they can extend beyond the last column or row in use.
+The lines fill the visible area of the grid, so they can extend beyond the last column or row in use, but never beyond `maxCols` and `maxRows`.
 
 ```css
 gridster .gridster-column,

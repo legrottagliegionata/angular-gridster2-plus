@@ -1,3 +1,4 @@
+
 name: Publish Package
 
 on:
@@ -12,6 +13,7 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v6
 
@@ -22,12 +24,15 @@ jobs:
 
       - name: Update npm
         run: npm install -g npm@latest
-      - run: npm ci --legacy-peer-deps
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
 
       - name: Check the tag against the package version
         run: |
           version=$(node -p "require('./projects/angular-gridster2-plus/package.json').version")
           tag="${GITHUB_REF_NAME#v}"
+
           if [ "$version" != "$tag" ]; then
             echo "Tag $GITHUB_REF_NAME does not match the package version $version"
             exit 1
@@ -37,25 +42,28 @@ jobs:
         id: registry
         run: |
           version=$(node -p "require('./projects/angular-gridster2-plus/package.json').version")
+
           if npm view "angular-gridster2-plus@$version" version > /dev/null 2>&1; then
-            echo "angular-gridster2-plus@$version is already published"
-            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "angular-gridster2-plus@$version is already published, nothing to do"
             echo "already_exists=true" >> "$GITHUB_OUTPUT"
           else
             echo "angular-gridster2-plus@$version is not published"
-            echo "published=false" >> "$GITHUB_OUTPUT"
             echo "already_exists=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - if: steps.registry.outputs.already_exists == 'false'
+      - name: Test
+        if: steps.registry.outputs.already_exists == 'false'
         run: npm run test-lib -- --watch=false
-      - if: steps.registry.outputs.published == 'false'
-      - if: steps.registry.outputs.already_exists == 'false'
+
+      - name: Build
+        if: steps.registry.outputs.already_exists == 'false'
         run: npm run build-lib
+
       - name: Publish package
         if: steps.registry.outputs.already_exists == 'false'
         working-directory: ./dist/angular-gridster2-plus
         run: npm publish
+
       - name: Create GitHub Release
         if: steps.registry.outputs.already_exists == 'false'
         uses: softprops/action-gh-release@v2

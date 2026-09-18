@@ -132,8 +132,7 @@ export class GridsterResizable {
     this.outerMarginRight = $options.outerMarginRight;
     this.outerMarginBottom = $options.outerMarginBottom;
     this.outerMarginLeft = $options.outerMarginLeft;
-    this.offsetLeft = this.gridster.el.scrollLeft - this.gridster.el.offsetLeft;
-    this.offsetTop = this.gridster.el.scrollTop - this.gridster.el.offsetTop;
+    this.updateScrollOffsets();
     this.diffLeft = e.clientX + this.offsetLeft - this.left;
     this.diffRight = e.clientX + this.offsetLeft - this.right;
     this.diffTop = e.clientY + this.offsetTop - this.top;
@@ -231,8 +230,7 @@ export class GridsterResizable {
       e.preventDefault();
     }
     GridsterUtils.checkTouchEvent(e);
-    this.offsetTop = this.gridster.el.scrollTop - this.gridster.el.offsetTop;
-    this.offsetLeft = this.gridster.el.scrollLeft - this.gridster.el.offsetLeft;
+    this.updateScrollOffsets();
     scroll(this.gridster, e, this.lastMouse, this.gridScrolled, true, this.resizeEventScrollType);
 
     this.lastMouse.clientX = e.clientX;
@@ -246,10 +244,17 @@ export class GridsterResizable {
     if (!this.gridster || !this.directionFunction) {
       return;
     }
-    this.offsetTop = this.gridster.el.scrollTop - this.gridster.el.offsetTop;
-    this.offsetLeft = this.gridster.el.scrollLeft - this.gridster.el.offsetLeft;
+    this.updateScrollOffsets();
     this.resizeToPointer(this.directionFunction);
   };
+
+  // RTL positions grow to the left, where scrollLeft goes negative: the horizontal scroll is mirrored like the pointer
+  private updateScrollOffsets(): void {
+    const el = this.gridster.el;
+    const scrollLeft = this.gridster.$options().dirType === DirTypes.RTL ? -el.scrollLeft : el.scrollLeft;
+    this.offsetLeft = scrollLeft - el.offsetLeft;
+    this.offsetTop = el.scrollTop - el.offsetTop;
+  }
 
   private resizeToPointer(directionFunction: (event: Pick<MouseEvent, 'clientX' | 'clientY'>) => void): void {
     // the pointer moves in screen pixels, the grid in its own pixels: a scaled grid (`scale`) needs the distance divided

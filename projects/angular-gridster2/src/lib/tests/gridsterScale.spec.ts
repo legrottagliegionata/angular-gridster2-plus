@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { Gridster } from '../gridster';
-import { GridsterConfig, GridType } from '../gridsterConfig';
+import { DirTypes, GridsterConfig, GridType } from '../gridsterConfig';
 import { GridsterItem } from '../gridsterItem';
 import { GridsterItemConfig } from '../gridsterItemConfig';
 import { cancelScroll } from '../gridsterScroll';
@@ -132,6 +132,22 @@ describe('a scaled grid', () => {
     expect(item.$item().rows).toBe(4);
 
     item.resize.dragStop(new MouseEvent('mouseup'));
+  });
+
+  it('moves a dragged item with the pointer in RTL', async () => {
+    const { item } = await createGrid(
+      { dirType: DirTypes.RTL, disableScrollVertical: true, disableScrollHorizontal: true },
+      { x: 1, y: 0, cols: 1, rows: 1 }
+    );
+
+    // RTL columns count from the right: 50 screen px to the right is one column back towards x = 0
+    item.drag.dragStart(new MouseEvent('mousedown', { clientX: 125, clientY: 25 }));
+    document.dispatchEvent(new MouseEvent('mousemove', { clientX: 175, clientY: 25 }));
+
+    expect(item.$item().x).toBe(0);
+
+    item.drag.dragStop(new MouseEvent('mouseup'));
+    expect(item.item().x).toBe(0);
   });
 
   // upstream #693: an empty-cell drag in a zoomed container picked the column next to the pointer; `scale` accounts for it

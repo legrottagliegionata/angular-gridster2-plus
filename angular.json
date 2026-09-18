@@ -97,20 +97,20 @@
         }
       }
     },
-    "angular-gridster2": {
+    "angular-gridster2-plus": {
       "projectType": "library",
-      "root": "projects/angular-gridster2",
-      "sourceRoot": "projects/angular-gridster2/src",
+      "root": "projects/angular-gridster2-plus",
+      "sourceRoot": "projects/angular-gridster2-plus/src",
       "prefix": "gridster",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
           "configurations": {
             "production": {
-              "tsConfig": "projects/angular-gridster2/tsconfig.lib.prod.json"
+              "tsConfig": "projects/angular-gridster2-plus/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/angular-gridster2/tsconfig.lib.json"
+              "tsConfig": "projects/angular-gridster2-plus/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -118,17 +118,17 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "tsConfig": "projects/angular-gridster2/tsconfig.spec.json"
+            "tsConfig": "projects/angular-gridster2-plus/tsconfig.spec.json"
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "lintFilePatterns": [
-              "projects/angular-gridster2/**/*.ts",
-              "projects/angular-gridster2/**/*.html"
+              "projects/angular-gridster2-plus/**/*.ts",
+              "projects/angular-gridster2-plus/**/*.html"
             ],
-            "eslintConfig": "projects/angular-gridster2/eslint.config.js"
+            "eslintConfig": "projects/angular-gridster2-plus/eslint.config.js"
           }
         }
       }

@@ -18,8 +18,8 @@
     "module": "preserve",
     "paths": {
       "angular-gridster2-plus": [
-        "./dist/angular-gridster2",
-        "./projects/angular-gridster2/src/public_api.ts"
+        "./dist/angular-gridster2-plus",
+        "./projects/angular-gridster2-plus/src/public_api.ts"
       ]
     }
   },

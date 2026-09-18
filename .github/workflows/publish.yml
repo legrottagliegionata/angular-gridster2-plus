@@ -6,8 +6,8 @@ on:
       - 'v*'
 
 permissions:
-  id-token: write  # Required for OIDC
-  contents: read
+  id-token: write
+  contents: write
 
 jobs:
   publish:
@@ -20,7 +20,6 @@ jobs:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
 
-      # Ensure npm 11.5.1 or later is installed
       - name: Update npm
         run: npm install -g npm@latest
       - run: npm ci --legacy-peer-deps
@@ -39,17 +38,26 @@ jobs:
         run: |
           version=$(node -p "require('./projects/angular-gridster2-plus/package.json').version")
           if npm view "angular-gridster2-plus@$version" version > /dev/null 2>&1; then
-            echo "angular-gridster2-plus@$version is already published, nothing to do"
-            echo "published=true" >> "$GITHUB_OUTPUT"
-          else
+            echo "angular-gridster2-plus@$version is already published"
             echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "already_exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "angular-gridster2-plus@$version is not published"
+            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "already_exists=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - if: steps.registry.outputs.published == 'false'
+      - if: steps.registry.outputs.already_exists == 'false'
         run: npm run test-lib -- --watch=false
       - if: steps.registry.outputs.published == 'false'
+      - if: steps.registry.outputs.already_exists == 'false'
         run: npm run build-lib
       - name: Publish package
-        if: steps.registry.outputs.published == 'false'
+        if: steps.registry.outputs.already_exists == 'false'
         working-directory: ./dist/angular-gridster2-plus
         run: npm publish
+      - name: Create GitHub Release
+        if: steps.registry.outputs.already_exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
